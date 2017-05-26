@@ -1,0 +1,24 @@
+@font-face {
+font-family: 'Abril Fatface';
+font-style: normal;
+font-weight: 400;
+src: url(https://static.canva.com/static/webfonts/AbrilFatface-Regular.woff) format('woff');
+}
+@font-face {
+font-family: 'Abril Fatface';
+font-style: normal;
+font-weight: 700;
+src: url(https://static.canva.com/static/webfonts/AbrilFatface-Regular.woff) format('woff');
+}
+@font-face {
+font-family: 'Abril Fatface';
+font-style: italic;
+font-weight: 400;
+src: url(https://static.canva.com/static/webfonts/AbrilFatface-Regular.woff) format('woff');
+}
+@font-face {
+font-family: 'Abril Fatface';
+font-style: italic;
+font-weight: 700;
+src: url(https://static.canva.com/static/webfonts/AbrilFatface-Regular.woff) format('woff');
+}

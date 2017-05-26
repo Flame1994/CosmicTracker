@@ -1,0 +1,24 @@
+@font-face {
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+src: url(https://static.canva.com/static/webfonts/Arimo.woff) format('woff');
+}
+@font-face {
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 700;
+src: url(https://static.canva.com/static/webfonts/Arimo-Bold.woff) format('woff');
+}
+@font-face {
+font-family: 'Arimo';
+font-style: italic;
+font-weight: 400;
+src: url(https://static.canva.com/static/webfonts/Arimo-Italic.woff) format('woff');
+}
+@font-face {
+font-family: 'Arimo';
+font-style: italic;
+font-weight: 700;
+src: url(https://static.canva.com/static/webfonts/Arimo-BoldItalic.woff) format('woff');
+}
