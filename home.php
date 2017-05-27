@@ -826,7 +826,7 @@
               </div>
             </div>                
         </div>
-        <div class="col-xs-7 map">
+        <div class="col-xs-12 col-lg-7 map">
             <?php
               if (isset($_SESSION['CharacterSystemName'])) {
                 echo '
@@ -846,7 +846,11 @@
                           <li>Data Sites<li/>
                         </ul>
                       </li>
-                          
+                      <li id="gas-filter" class="level-one"><img src="img/gas.gif">
+                        <ul class="level-two">
+                          <li>Gas Sites<li/>
+                        </ul>
+                      </li>   
                       <li id="combat-filter" class="level-one"><img src="img/combat.png">
                         <ul class="level-two">
                           <li>Combat Sites<li/>
@@ -882,9 +886,15 @@
                           $systems = $content['map']['systems'];
                           foreach($systems as $system) { 
                               // echo $system['name'];
-                              echo '<div class="system" id="'.$system['name'].'" style="position: absolute; left: '.($system['x']+36).'px; top: '.($system['y']+5).'px; width: 16px; height: 16px; cursor: pointer; z-index:23; background-color: #FFF;">
-                                  <div class="system-name"><h5>'.$system['name'].'</h5></div>
-                              </div>';
+                            if ($system['name'] == $_SESSION['CharacterSystemName']) {
+                            echo '  <div class="system current-system" id="'.$system['name'].'" style="position: absolute; left: '.($system['x']+36).'px; top: '.($system['y']+5).'px; width: 16px; height: 16px; cursor: pointer; z-index:23; background-color: #337ab7;">
+                                      <div class="system-name"><h5>'.$system['name'].'</h5></div>
+                                  </div>';
+                                } else {
+                            echo '  <div class="system" id="'.$system['name'].'" style="position: absolute; left: '.($system['x']+36).'px; top: '.($system['y']+5).'px; width: 16px; height: 16px; cursor: pointer; z-index:23; background-color: #FFF;">
+                                      <div class="system-name"><h5>'.$system['name'].'</h5></div>
+                                  </div>';  
+                                }                                      
                           }
                           $connections = $content['map']['connections'];
                           foreach($connections as $connection) { 
@@ -897,10 +907,6 @@
             
             
         </div>        
-        <script type="text/javascript">
-            // document.getElementById("<?php echo $_SESSION["CharacterSystemName"] ?>").background-color = "red";
-            $("#<?php echo $_SESSION["CharacterSystemName"] ?>").css({"background-color":"#337ab7"});
-        </script>       
         <div class="col-xs-12 footer">
             <div class="col-sm-6">
                 All EVE related materials are property of <a href="https://www.ccpgames.com/">CCP Games</a> <br>                
@@ -920,16 +926,18 @@
                 $("#relic-filter").css("background-color", "#FF8C00");
                 $.ajax({
                     url:'/getRelicSites.php',
-                    type:'GET',
-                    data:'region=<?php echo $_SESSION["CharacterRegionName"]; ?>',
+                    type:'GET',                    
                     beforeSend:function () {
 
                     },
-                    success:function (data) {
-                        var json = JSON.parse(data);
-                        for (var key in json) {
-                          if (json.hasOwnProperty(key)) {
-                            $("#"+json[key].system).css("background-color", "#FF8C00");
+                    success:function (data) {                      
+                        if (data == 'NONE') {
+                        } else {
+                          var json = JSON.parse(data);
+                          for (var key in json) {
+                            if (json.hasOwnProperty(key)) {
+                              $("#"+json[key].system).css("background-color", "#FF8C00");
+                            }
                           }
                         }
                     }
@@ -941,21 +949,46 @@
                 $("#data-filter").css("background-color", "cyan");
                 $.ajax({
                     url:'/getDataSites.php',
-                    type:'GET',
-                    data:'region=<?php echo $_SESSION["CharacterRegionName"]; ?>',
+                    type:'GET',                    
                     beforeSend:function () {
 
                     },
                     success:function (data) {
-                        var json = JSON.parse(data);
-                        for (var key in json) {
-                          if (json.hasOwnProperty(key)) {
-                            $("#"+json[key].system).css("background-color", "cyan");
-                          }
-                        }                        
+                        if (data == 'NONE') {
+                        } else {
+                          var json = JSON.parse(data);
+                          for (var key in json) {
+                            if (json.hasOwnProperty(key)) {
+                              $("#"+json[key].system).css("background-color", "cyan");
+                            }
+                          }                        
+                        }
                     }
                 }); 
 
+            });
+
+            $("#gas-filter").click(function(){
+                clearRegionMap();
+                $("#gas-filter").css("background-color", "grey");
+                $.ajax({
+                    url:'/getGasSites.php',
+                    type:'GET',                    
+                    beforeSend:function () {
+
+                    },
+                    success:function (data) {
+                        if (data == 'NONE') {
+                        } else {
+                          var json = JSON.parse(data);
+                          for (var key in json) {
+                            if (json.hasOwnProperty(key)) {
+                              $("#"+json[key].system).css("background-color", "grey");
+                            }
+                          }
+                        }
+                    }
+                }); 
             });
 
             $("#combat-filter").click(function(){
@@ -963,16 +996,18 @@
                 $("#combat-filter").css("background-color", "red");
                 $.ajax({
                     url:'/getCombatSites.php',
-                    type:'GET',
-                    data:'region=<?php echo $_SESSION["CharacterRegionName"]; ?>',
+                    type:'GET',                    
                     beforeSend:function () {
 
                     },
                     success:function (data) {
-                        var json = JSON.parse(data);
-                        for (var key in json) {
-                          if (json.hasOwnProperty(key)) {
-                            $("#"+json[key].system).css("background-color", "red");
+                        if (data == 'NONE') {
+                        } else {
+                          var json = JSON.parse(data);
+                          for (var key in json) {
+                            if (json.hasOwnProperty(key)) {
+                              $("#"+json[key].system).css("background-color", "red");
+                            }
                           }
                         }
                     }
@@ -981,21 +1016,20 @@
 
             $("#wormhole-filter").click(function(){
                 clearRegionMap();
-                $("#wormhole-filter").css("background-color", "yellow");
-                alert(2);
+                $("#wormhole-filter").css("background-color", "yellow");                
                 $.ajax({                    
                     url:'/getWormholes.php',
-                    type:'GET',
-                    data:'region=<?php echo $_SESSION["CharacterRegionName"]; ?>',
-                    beforeSend:function () {
-                      alert(3);
+                    type:'GET',                    
+                    beforeSend:function () {                      
                     },
-                    success:function (data) {
-                        alert(1);
-                        var json = JSON.parse(data);
-                        for (var key in json) {
-                          if (json.hasOwnProperty(key)) {
-                            $("#"+json[key].system).css("background-color", "yellow");
+                    success:function (data) {  
+                        if (data == 'NONE') {
+                        } else {                      
+                          var json = JSON.parse(data);
+                          for (var key in json) {
+                            if (json.hasOwnProperty(key)) {
+                              $("#"+json[key].system).css("background-color", "yellow");
+                            }
                           }
                         }
                     }
@@ -1009,6 +1043,26 @@
             });
 
         });
+    </script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $.ajax({
+            url:'/getMap.php',
+            type:'GET',
+            data:'system='+<?php echo "\"".$_SESSION['CharacterSystemID']."\"";?>,
+            beforeSend:function () {
+
+            },
+            success:function (data) {
+                if (data == null || data == '' || data == 'NONE') {
+                } else {      
+                    $("#canvas-container").html("");
+                    $("#canvas-container").html(data);
+                    $("#"+<?php echo "\"".$_SESSION['CharacterSystemName']."\""; ?>).css("background-color", "#337ab7");
+                }                            
+            }
+        }); 
+      });
     </script>
     <script type="text/javascript">
         $(document).ready(function(){
@@ -1029,54 +1083,64 @@
         setInterval(function() {
           $(document).ready(function(){
             $.ajax({
-
-                url:'/checkSystem.php',
+                url:'/updateSystem.php',
                 type:'GET',
-                data:'system='+queue[queue.length-1],
                 beforeSend:function () {
-                    // alert(1);
-                },
-                success:function (data) {
-                    // alert(data);
-                    if (data == null || data == '' || data == 'NONE') {
-                      // alert(2);
-                    } else {
-                      // alert(3);
-                        $("#system-info").html(data);
-                        $("#jump-history").html("");
-                                               
-                        var text = "";
-                        var i;
-                        if (queue.length > 10) {
-                            queue.shift();
-                        }
-                        for (i = 0; i < queue.length; i++) {
-                            text += "> <span class= \"jump-history\" onmouseover=\"showSystem(\'"+queue[i]+"\')\" onmouseout=\"hideSystem(\'"+queue[i]+"\')\" alt=\""+queue[i]+"\">"+queue[i]+"</span> ";
-                            //<span class="jump-history" onmouseover="showSystem('D-PNP9')" onmouseout="hideSystem('D-PNP9')" alt="D-PNP9">D-PNP9</span>
-                        }
-                        text += "</h4>";
 
-                        $("#jump-history").html(text);
+                },
+                success:function (data2) {
+
+                    if (data2 == null || data2 == '' || data2 == 'NONE') {
+                    } else {                      
+                      $.ajax({
+                        url:'/checkSystem.php',
+                        type:'GET',
+                        data:'system='+data2,
+                        beforeSend:function () {
+                            // alert(1);
+                        },
+                        success:function (data) {
+                            // alert(data);
+                            if (data == null || data == '' || data == 'NONE') {
+                              // alert(2);
+                            } else {
+                              // alert(3);
+                                $("#system-info").html(data);
+                                $("#jump-history").html("");
+                                                       
+                                var text = "";
+                                var i;
+                                if (queue.length > 10) {
+                                    queue.shift();
+                                }
+                                for (i = 0; i < queue.length; i++) {
+                                    text += "> <span class= \"jump-history\" onmouseover=\"showSystem(\'"+queue[i]+"\')\" onmouseout=\"hideSystem(\'"+queue[i]+"\')\" alt=\""+queue[i]+"\">"+queue[i]+"</span> ";
+                                    //<span class="jump-history" onmouseover="showSystem('D-PNP9')" onmouseout="hideSystem('D-PNP9')" alt="D-PNP9">D-PNP9</span>
+                                }
+                                text += "</h4>";
+
+                                $("#jump-history").html(text);
+                                $.ajax({
+                                    url:'/getMap.php',
+                                    type:'GET',
+                                    data:'system='+data2,
+                                    beforeSend:function () {
+
+                                    },
+                                    success:function (data) {
+                                        if (data == null || data == '' || data == 'NONE') {
+                                        } else {      
+                                            $("#canvas-container").html("");
+                                            $("#canvas-container").html(data);                                            
+                                        }                            
+                                    }
+                                }); 
+                            }
+                        }
+                      });                       
                     }
-                }
-            }); 
-
-            $.ajax({
-                url:'/getMap.php',
-                type:'GET',
-                data:'system='+queue[queue.length-1],
-                beforeSend:function () {
-
-                },
-                success:function (data) {
-                    if (data == null || data == '' || data == 'NONE') {
-                    } else {      
-                        $("#canvas-container").html("");
-                        $("#canvas-container").html(data);
-                        $("#"+<?php echo "\"".$_SESSION['CharacterSystemName']."\""; ?>).css("background-color", "#337ab7");
-                    }                            
-                }
-            }); 
+                  }
+            });             
           });          
         }, 1000*5); // where X is your every X minutes
     </script>  
@@ -1093,19 +1157,8 @@
         function clearRegionMap() {            
             $(".level-one").css("background-color", "white");
             $("#jump-filter").css("background-color", "white");
-            $.getJSON("maps/"+<?php $r = str_replace(" ","_",$_SESSION['CharacterRegionName']); echo "\"".$r."\""; ?>+".svg.json", function(json) {
-                for (var key in json.map.systems) {
-                  if (json.map.systems.hasOwnProperty(key)) {          
-                    if (json.map.systems[key].name == queue[queue.length-1]) {
-                        $("#"+json.map.systems[key].name).css("background-color", "#337ab7");
-                    } else {
-                        $("#"+json.map.systems[key].name).css("background-color", "white");
-                    }
-                    
-                  }
-                }
-            });   
-            
+            $(".system").css("background-color", "white");
+            $(".current-system").css("background-color", "#337ab7");                        
         }
 
         function showJumpHistory() {

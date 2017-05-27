@@ -6,7 +6,7 @@
 
 	$conn = connect();
     $prepared = $conn->prepare("SELECT * FROM signatures WHERE region_name = ? AND sig_type = ?"); 
-    $site = "Combat Site";
+    $site = "Gas Site";
     $prepared->bind_param('ss', $region, $site);    
     $prepared->execute();
     $result = get_result($prepared);

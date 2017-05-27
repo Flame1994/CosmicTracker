@@ -1,7 +1,7 @@
 <?php
 	include "php/routes.php";
 	session_start();
-	$region = $_GET['region'];
+	$region = $_SESSION['CharacterRegionName'];
 	
 
 	$conn = connect();
@@ -16,13 +16,13 @@
 	
     if ($prepared->num_rows == 0) {
         echo "NONE";
+    } else {
+        while ($row = array_shift($result)) {
+            $row_array['system'] = $row['system'];      
+            array_push($return_arr,$row_array);
+        }      
+        $conn->close();        
+        echo json_encode($return_arr);    
     }
-    while ($row = array_shift($result)) {
-
-        $row_array['system'] = $row['system'];	    
-	    array_push($return_arr,$row_array);
-    }      
-    $conn->close();
-	
-	echo json_encode($return_arr);
+    
 ?>

@@ -437,7 +437,7 @@ table tr {
   top: 0;
   /*margin: 50px;*/
   margin-top: 20px;
-  width: 183px;
+  /*width: 183px;*/
   z-index: 100;
   /*max-width: 50px;*/
   border: 1px solid #bed1df;
@@ -469,23 +469,27 @@ li.level-one:first-child {
 }
 
 #relic-filter:hover {
-  background-color: #FF8C00;
+  background-color: #FF8C00 !important;
 }
 
 #data-filter:hover {
-  background-color: cyan;
+  background-color: cyan !important;
+}
+
+#gas-filter:hover {
+  background-color: grey !important;
 }
 
 #combat-filter:hover {
-  background-color: red;
+  background-color: red !important;
 }
 
 #wormhole-filter:hover {
-  background-color: yellow;
+  background-color: yellow !important;
 }
 
 #no-filter:hover {
-  background-color: #337ab7;
+  background-color: #337ab7 !important;
 }
 
 #jump-filter {
@@ -776,4 +780,51 @@ div.panel p {
 
 div.panel img {
   max-width: 100%;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {display:none;}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
 }
