@@ -476,11 +476,18 @@
                     </span></h2>
                 </div>
                 <div class="col-xs-12" style="height: 160px;">
-                    <h6>Add Signatures</h6>
-                    <form id="add-sig" action="signature" enctype="multipart/form-data" method="post">
-                        <textarea id="sigdata" name="sigdata" placeholder="Add signature results" style="width:100%; color:#333333; font-size:12px" rows="4"></textarea>
-                        <button type="submit" name="Submit" id="Submit" class="btn btn-default">Submit</button>
-                    </form>                    
+                    <?php
+                      if (isset($_SESSION['CharacterSystemName']) && $_SESSION['CharacterSystemName'] != '' && !is_null($_SESSION['CharacterSystemName'])) {
+                        echo '
+                          <h6>Add Signatures</h6>
+                          <form id="add-sig" action="signature" enctype="multipart/form-data" method="post">
+                              <textarea id="sigdata" name="sigdata" placeholder="Add signature results" style="width:100%; color:#333333; font-size:12px" rows="4"></textarea>
+                              <button type="submit" name="Submit" id="Submit" class="btn btn-default">Submit</button>
+                          </form>
+                        ';
+                      }
+                    ?>
+                    
                 </div>
                 <?php
                   if (isset($_GET['s'])) {
@@ -511,53 +518,58 @@
                 
                 
                 <div class="col-xs-12 signature-list">
-                    <table>
-                        <tr>
-                            <th>System</th>
-                            <th>ID</th>
-                            <th>Type</th>
-                            <th>Signature Name</th>
-                            <th>Explorer</th>
-                            <th>Time</th>
-                            <th></th>
-                        </tr>
-                        <?php
-                            $conn = connect();
-                            $prepared = $conn->prepare("SELECT * FROM signatures WHERE system = ? AND (corp_id = ? OR alliance_id = ?)"); 
-                            $prepared->bind_param('sss', $_SESSION["CharacterSystemName"], $_SESSION["CharacterCorpID"], $_SESSION['CharacterAllianceID']);    
-                            $prepared->execute();
-                            $result = get_result($prepared);
-                            while ($row = array_shift($result)) {
-                                $system = $row['system'];
-                                $sigID = $row['sig_id'];
-                                $sigType = $row['sig_type'];
-                                $sigName = $row['sig_name'];
-                                $reported = $row['reported'];
-                                $reportedID = $row['reported_id'];
-                                $reportTime = $row['report_time'];
-                                echo '
-                                    <tr>
-                                        <td>'.$system.'</td>
-                                        <td>'.$sigID.'</td>
-                                        <td>'.$sigType.'</td>
-                                        <td>'.$sigName.'</td>
-                                        <td><a href="https://zkillboard.com/character/'.$reportedID.'/">'.$reported.'</a></td>
-                                        <td>'.$reportTime.'</td>
-                                        <td>
-                                          <form id="sig-action-form" action="index.php/delete-signature" method="post" style="margin: 0;">
-                                              <input type="hidden" name="sig_id" value="'.$sigID.'">
-                                              <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Signature" name="del_sig" value="Delete Sig" style="padding-left:6px;">
-                                                <span><i class="fa fa-times" aria-hidden="true"></i></span>
-                                              </button>
-                                          </form>
-                                        </td>
-                                    </tr>
-                                ';
-                                
-                            }      
-                            $conn->close();
+                  <?php
+                    if (isset($_SESSION['CharacterSystemName']) && $_SESSION['CharacterSystemName'] != '' && !is_null($_SESSION['CharacterSystemName'])) {
+                      echo '
+                        <table>
+                            <tr>
+                                <th>System</th>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Signature Name</th>
+                                <th>Explorer</th>
+                                <th>Time</th>
+                                <th></th>
+                            </tr>';
+                            
+                                $conn = connect();
+                                $prepared = $conn->prepare("SELECT * FROM signatures WHERE system = ? AND (corp_id = ? OR alliance_id = ?)"); 
+                                $prepared->bind_param('sss', $_SESSION["CharacterSystemName"], $_SESSION["CharacterCorpID"], $_SESSION['CharacterAllianceID']);    
+                                $prepared->execute();
+                                $result = get_result($prepared);
+                                while ($row = array_shift($result)) {
+                                    $system = $row['system'];
+                                    $sigID = $row['sig_id'];
+                                    $sigType = $row['sig_type'];
+                                    $sigName = $row['sig_name'];
+                                    $reported = $row['reported'];
+                                    $reportedID = $row['reported_id'];
+                                    $reportTime = $row['report_time'];
+                                    echo '
+                                        <tr>
+                                            <td>'.$system.'</td>
+                                            <td>'.$sigID.'</td>
+                                            <td>'.$sigType.'</td>
+                                            <td>'.$sigName.'</td>
+                                            <td><a href="https://zkillboard.com/character/'.$reportedID.'/">'.$reported.'</a></td>
+                                            <td>'.$reportTime.'</td>
+                                            <td>
+                                              <form id="sig-action-form" action="index.php/delete-signature" method="post" style="margin: 0;">
+                                                  <input type="hidden" name="sig_id" value="'.$sigID.'">
+                                                  <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Signature" name="del_sig" value="Delete Sig" style="padding-left:6px;">
+                                                    <span><i class="fa fa-times" aria-hidden="true"></i></span>
+                                                  </button>
+                                              </form>
+                                            </td>
+                                        </tr>
+                                    ';
+                                    
+                                }      
+                                $conn->close();
+                    
+                  echo '</table>';
+                      }
                     ?> 
-                    </table>
                 </div>
                 <div class="col-xs-12 intel">
                     <?php
@@ -880,53 +892,44 @@
 
         </div>
         <div class="col-xs-12 col-lg-7 map">
-            <?php
-              if (isset($_SESSION['CharacterSystemName'])) {
-                echo '
-                    <ul id="nav-bar">
-                      <li id="no-filter" class="level-one" onmousedown="clearRegionMap()" style="background-color: #337ab7;"><img src="img/reset.png">
-                        <ul class="level-two">
-                          <li>No Filter<li/>
-                        </ul>
-                      </li> 
-                      <li id="relic-filter" class="level-one"><img src="img/relic.png">
-                        <ul class="level-two">
-                          <li>Relic Sites<li/>
-                        </ul>
-                      </li> 
-                      <li id="data-filter" class="level-one"><img src="img/data.png">
-                        <ul class="level-two">
-                          <li>Data Sites<li/>
-                        </ul>
-                      </li>
-                      <li id="gas-filter" class="level-one"><img src="img/gas.gif">
-                        <ul class="level-two">
-                          <li>Gas Sites<li/>
-                        </ul>
-                      </li>   
-                      <li id="combat-filter" class="level-one"><img src="img/combat.png">
-                        <ul class="level-two">
-                          <li>Combat Sites<li/>
-                        </ul>
-                      </li>                    
-                      <li id="wormhole-filter" class="level-one"><img src="img/wormhole.png">
-                        <ul class="level-two">
-                          <li>Wormholes<li/>
-                        </ul> 
-                      </li>                                   
-                    </ul>
-                ';
-              }            
-            ?>
+            <div id="map-filters">
+              <ul id="nav-bar">
+                <li id="no-filter" class="level-one" onmousedown="clearRegionMap()" style="background-color: #337ab7;"><img src="img/reset.png">
+                  <ul class="level-two">
+                    <li>No Filter<li/>
+                  </ul>
+                </li> 
+                <li id="relic-filter" class="level-one"><img src="img/relic.png">
+                  <ul class="level-two">
+                    <li>Relic Sites<li/>
+                  </ul>
+                </li> 
+                <li id="data-filter" class="level-one"><img src="img/data.png">
+                  <ul class="level-two">
+                    <li>Data Sites<li/>
+                  </ul>
+                </li>
+                <li id="gas-filter" class="level-one"><img src="img/gas.gif">
+                  <ul class="level-two">
+                    <li>Gas Sites<li/>
+                  </ul>
+                </li>   
+                <li id="combat-filter" class="level-one"><img src="img/combat.png">
+                  <ul class="level-two">
+                    <li>Combat Sites<li/>
+                  </ul>
+                </li>                    
+                <li id="wormhole-filter" class="level-one"><img src="img/wormhole.png">
+                  <ul class="level-two">
+                    <li>Wormholes<li/>
+                  </ul> 
+                </li>                                   
+              </ul>
+            </div>            
             <div class="col-xs-12" id="history-container">
-                <?php
-                  if (isset($_SESSION['CharacterSystemName'])) {
-                    echo '<h4 style="color: white; margin-top: 20px;">Jump History <span id="jump-filter">show</span></h4>';
-                  }
-                ?>
-                                
+                <h4 style="color: white; margin-top: 20px;">Jump History <span id="jump-filter">show</span></h4>
                 <div class="col-xs-12" id="jump-history">
-                    <span class="jump-history" onmouseover="showSystem('<?php echo $_SESSION['CharacterSystemName'] ?>')" onmouseout="hideSystem('<?php echo $_SESSION['CharacterSystemName'] ?>')" alt="<?php echo $_SESSION['CharacterSystemName'] ?>"><?php echo $_SESSION['CharacterSystemName'] ?></span>
+                    <span class="jump-history" onmouseover="showSystem('<?php echo $_SESSION['CharacterSystemName'] ?>')" onmouseout="hideSystem('<?php echo $_SESSION['CharacterSystemName'] ?>')" alt="<?php echo $_SESSION['CharacterSystemName'] ?>"<?php echo $_SESSION['CharacterSystemName'] ?></span>
                 </div>
             </div>
             <div class="col-xs-12" id="canvas-container">
@@ -1124,7 +1127,7 @@
                 if (data == null || data == '' || data == 'NONE') {
                 } else {      
                     $("#canvas-container").html("");
-                    $("#canvas-container").html(data);
+                    $("#canvas-container").html(data);                    
                     $("#"+<?php echo "\"".$_SESSION['CharacterSystemName']."\""; ?>).css("background-color", "#337ab7");
                 }                            
             }
