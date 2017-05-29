@@ -1,6 +1,15 @@
 <?php
 	include "php/routes.php";
 	session_start();
+	$url = file_get_contents("https://crest-tq.eveonline.com/");
+    $content = json_decode($url, true);
+
+    $serviceStatus =  $content['serviceStatus'];
+    $serverCount =  $content['userCount_str'];
+    $serviceStatus = 'offline';
+    if ($serviceStatus != 'online') {
+      echo "logout";
+    }
 	if (isset($_SESSION['CharacterID'])) {
 		$charid = $_SESSION['CharacterID'];
 		$access = $_SESSION['AccessToken'];

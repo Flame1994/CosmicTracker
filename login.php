@@ -1,5 +1,11 @@
 <?php
-  if (isset($_SESSION['CharacterID'])) {
+
+  $url = file_get_contents("https://crest-tq.eveonline.com/");
+  $content = json_decode($url, true);
+
+  $serviceStatus =  $content['serviceStatus'];  
+  $serverCount =  $content['userCount_str'];   
+  if (isset($_SESSION['CharacterID']) && $serviceStatus == 'online') {
     header('Location: '.'/home');
   }
 ?>
@@ -271,10 +277,18 @@
         <h1 id="name"> COSMIC TRACKER</h1>
         <img id="ship" src="img/ship.png">
         <div id="login-container">
-            <img id="logo" src="img/logo.png">
+            <!-- <img id="logo" src="img/logo.png"> -->
             <h1>Welcome</h1>
             <h5>Please Login to start exploring!</h5>
-            <a id="eve-login" href="https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=http://cosmic.ashfordindustries.xyz/callback.php&client_id=86fe2014301a423e9f9a4df3c44f24b1&scope=characterLocationRead"><img id="login-eve" src="EVE_SSO_Login_Buttons_Large_Black.png"></a>            
+            <?php
+                             
+              if ($serviceStatus == 'online') {
+                  echo '<a id="eve-login" href="https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=http://cosmic.ashfordindustries.xyz/callback.php&client_id=86fe2014301a423e9f9a4df3c44f24b1&scope=characterLocationRead characterNavigationWrite esi-ui.write_waypoint.v1"><img id="login-eve" src="EVE_SSO_Login_Buttons_Large_Black.png"></a>';
+              } else {
+                echo '<h4 style="color:red; text-align:center; font-weight:700;">Eve Servers are offline, come back in a few minutes.</h4>';
+              }
+            ?>
+            
             <h5 id="creator">Created by <a href="https://evewho.com/pilot/Kallen+Ashford">Kallen Ashford</a><br>All EVE related materials are property of <a href="https://www.ccpgames.com/">CCP Games</a></h5>
             
         </div>

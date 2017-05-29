@@ -4,6 +4,7 @@
 	include "php/routes.php";
 	session_start();
 	
+	
 	if (isset($_SESSION['CharacterID']) && isset($_GET['system'])) {
 		$conn = connect();
 		$main_system_id = "".$_GET['system']."";
@@ -11,8 +12,7 @@
         $prepared->bind_param('s', $main_system_id);    
         $prepared->execute();
         $result = get_result($prepared);
-        if ($prepared->num_rows == 0) {
-        	echo "NOT IN DATABASE";
+        if ($prepared->num_rows == 0) {        	
             // SYSTEM NOT YET IN DATABASE;
             $url = file_get_contents("https://esi.tech.ccp.is/dev/universe/systems/".$_GET['system']."/?datasource=tranquility&language=en-us");
 	        $content = json_decode($url, true);
@@ -249,8 +249,7 @@
                     
 		        </script>
 			';
-        } else {
-        	echo "IN DATABASE";
+        } else {        	
         	$conn0 = connect();
         	$prepared0 = $conn->prepare("SELECT * FROM neighbours WHERE neighbour_id = ?"); 
 	        $prepared0->bind_param('s', $main_system_id);    
@@ -389,7 +388,7 @@
                             <table>';	
                             $conn4 = connect();			                                    
                             $prepared4 = $conn4->prepare("SELECT * FROM signatures WHERE system = ?"); 
-                            $prepared4->bind_param('s', $content3['name']);    
+                            $prepared4->bind_param('s', $neighbour_name);    
                             $prepared4->execute();
                             $result4 = get_result($prepared4);
                             if ($prepared4->num_rows == 0) {

@@ -57,12 +57,26 @@
 	            $systems = $content['map']['systems'];
 	            foreach($systems as $system) {
 	            	if ($system['id'] == $main_system_id) {
-        		echo '	<div class="system current-system" id="'.$system['name'].'" style="position: absolute; left: '.($system['x']+36).'px; top: '.($system['y']+5).'px; width: 16px; height: 16px; cursor: pointer; z-index:23; background-color: #337ab7;">
+        		echo '	<div class="system current-system" id="'.$system['name'].'" onmouseover="showSystemInfo(\''.$system['name'].'\', \''.$system['id'].'\')" onmouseout="hideSystemInfo(\''.$system['name'].'\')" style="position: absolute; left: '.($system['x']+36).'px; top: '.($system['y']+5).'px; width: 16px; height: 16px; cursor: pointer; background-color: #337ab7;">
                 			<div class="system-name"><h5>'.$system['name'].'</h5></div>
+                			<div id="'.$system['name'].'-info" class="system-info-popup">
+                				<div class="col-xs-12">
+	                              <h5>'.$system['name'].'</h5>     
+	                              <div id="'.$system['name'].'-sites"></div>                                         
+	                              <button onclick="setDestenation('.$system['id'].')" class="btn btn-default btn-dest">Set Destination</button>
+	                            </div>
+                			</div>
             			</div>';
 	            	} else {
-        		echo '	<div class="system" id="'.$system['name'].'" style="position: absolute; left: '.($system['x']+36).'px; top: '.($system['y']+5).'px; width: 16px; height: 16px; cursor: pointer; z-index:23; background-color: #FFF;">
+        		echo '	<div class="system" id="'.$system['name'].'" onmouseover="showSystemInfo(\''.$system['name'].'\', \''.$system['id'].'\')" onmouseout="hideSystemInfo(\''.$system['name'].'\')" style="position: absolute; left: '.($system['x']+36).'px; top: '.($system['y']+5).'px; width: 16px; height: 16px; cursor: pointer; background-color: #FFF;">
                 			<div class="system-name"><h5>'.$system['name'].'</h5></div>
+                			<div id="'.$system['name'].'-info" class="system-info-popup">
+                				<div class="col-xs-12">
+                                  <h5>'.$system['name'].'</h5>         
+                                  <div id="'.$system['name'].'-sites"></div>                                     
+                                  <button onclick="setDestenation('.$system['id'].')" class="btn btn-default btn-dest">Set Destination</button>
+                                </div>
+                			</div>
             			</div>';	
 	            	}                    
 	                
@@ -73,7 +87,11 @@
 	            }  
 	            echo '</canvas>';
 		    }
-        }        
+        } 
+
+        $conn->close();       
+	} else {
+		
 	}
-	$conn->close();
+	
 ?>

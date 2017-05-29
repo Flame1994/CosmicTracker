@@ -828,3 +828,45 @@ input:checked + .slider:before {
   -ms-transform: translateX(26px);
   transform: translateX(26px);
 }
+
+
+.system-info-popup {
+  position: absolute;
+  display: none;
+  left: 15px;
+  top: 0px;
+  width: 200px;
+  font-size: 12px;
+  background-color: #333;
+  border: solid 1px #888;
+  z-index: 100;
+}
+
+.system-info-popup h5 {
+  color: white;
+  border-bottom: solid 1px white;
+}
+
+.system-info-popup h6 {
+  color: white;
+}
+
+.btn-dest {
+  height: 100%;
+  background-color: #444 !important;
+  border-color: #555 !important;
+  color: white;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.btn-dest:hover {
+  border-color: #666 !important;
+  color: white !important;
+}
+
+#help-faq p {
+  font-size: 12px;
+  margin: 0;
+  color: white;
+}

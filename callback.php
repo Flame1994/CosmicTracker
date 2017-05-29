@@ -4,15 +4,10 @@
 	include "php/connect.php";	
 	$url = 'https://login.eveonline.com/oauth/token';
 	if (isset($_GET['code'])) {
-		echo "Code is there";
-		echo "<br>";
 		$code = $_GET['code'];
-		echo $code;
-		echo "<br>";
 		$data = array('grant_type' => 'authorization_code', 'code' => $code);
 
 		// use key 'http' even if you send the request to https://...
-		echo "<br>";
 		$key = base64_encode('86fe2014301a423e9f9a4df3c44f24b1:B54yYfQbuBtBYnqSG6tymVvapyK8ek1Alt5T56SG');
 		$options = array(
 		    'http' => array(

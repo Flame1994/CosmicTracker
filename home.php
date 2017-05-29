@@ -1,5 +1,15 @@
 <?php    
     if (isset($_SESSION["AccessToken"])) {
+        $url = file_get_contents("https://crest-tq.eveonline.com/");
+        $content = json_decode($url, true);
+
+        $serviceStatus =  $content['serviceStatus'];
+        $serverCount =  $content['userCount_str'];        
+        if ($serviceStatus != 'online') {
+          header('Location: '.'/logout');
+        }
+
+
         $url = 'https://login.eveonline.com/oauth/token';
         $data = array('grant_type' => 'refresh_token', 'refresh_token' => $_SESSION["RefreshToken"]);
 
@@ -43,10 +53,9 @@
             }
             
         }
-    } 
-    // else {
-    //   header('Location: '.'/login');
-    // }
+    } else {
+      header('Location: '.'/login');
+    }
 ?>
 
 <html lang="en-US" class=" js no-touch cssanimations csstransitions" style="">
@@ -83,6 +92,7 @@
         <script type="text/javascript">
             var queue = [];
             queue.push("<?php echo $_SESSION['CharacterSystemName'] ?>");
+            var desto = "";
             // var i = queue.shift(); // queue is now [5]
             // alert(i);              // displays 2   
         </script>
@@ -354,7 +364,29 @@
     </head>
     <body class="homepage" id="content-block">
         <div class="col-xs-12 output-test">
-          
+          <?php
+
+            // $myObj = new stdClass();
+            // $url = 'https://crest-tq.eveonline.com/characters/'.$_SESSION['CharacterID'].'/ui/autopilot/waypoints/';
+            // $myObj->clearOtherWaypoints = true;
+            // $myObj->first = true;
+            // $myObj->solarSystem->href = "https://crest-tq.eveonline.com/solarsystems/30003151/";
+            // $myObj->solarSystem->id = 30003151;
+
+            // $myJSON = json_encode($myObj);
+            // echo $myJSON;
+
+            // $options = array(
+            //     'http' => array(
+            //         'header'  => "Authorization: Bearer ".$_SESSION['AccessToken']."\r\nContent-type: application/json",
+            //         'method'  => 'POST',
+            //         'content' => $myJSON
+            //     )
+            // );
+            // $context  = stream_context_create($options);
+            // $result = file_get_contents($url, false, $context);
+
+          ?>
         </div>
         <canvas id="backdrop" style="position: absolute;"></canvas>
         <div class="col-xs-12 col-lg-5 side-panel" id="system-info-container">
@@ -659,7 +691,7 @@
                 </div>
             </div>    
             <div id="all-sigs" class="col-xs-12">
-              <h4>Signatures scanned in <span class="text-primary"><?php echo $_SESSION['CharacterRegionName']; ?></span></h4>
+              <h4 id="sig-region">Signatures scanned in <span class="text-primary"><?php echo $_SESSION['CharacterRegionName']; ?></span></h4>
               <form action="" autocomplete="on" style="margin-bottom: 50px;">
                 <input id="search" name="search" type="text" placeholder="What are you looking for?"><input id="search_submit" value="Rechercher" type="submit"><i class="fa fa-search search-bar" aria-hidden="true" style="font-size: 30px;"></i>
               </form>
@@ -824,7 +856,28 @@
                 <p>Go to the website and paste with <span class="key">ctrl</span>+<span class="key">V</span> into the textarea. Click the submit button.</p>
                 <img src="img/step5.JPG">
               </div>
-            </div>                
+              <div id="help-faq">
+                <h3 style="border-bottom: solid 1px white; text-align: left;">FAQ</h3>
+                <h4>What is this?</h4>
+                <p>This site provides you with the ability to map the signatures you or any other alliance member has scanned accross New Eden. By tracking your current location, the website follows you through each system for a user friendly experience in submitting signatures that you have scanned.</p>
+                <hr>
+                <h4>How do you track my location?</h4>
+                <p>By using SSO (Single Sign On) on this website, you give us permission to access your live location through the CREST API. The Eve ESI will be used in the future. Your location is never stored and will not be made available to other users.</p>
+                <hr>
+                <h4>Why should I use this?</h4>
+                <p>This site gives you the opportunity to make ISK faster. When entering a system, the website will display which sites has been scanned. You can easily see which sites you can then ignore or scan.</p>
+                <hr>
+                <h4>Who can see the scanned sites?</h4>
+                <p>Only alliance members will be able to see the sites you have scanned.</p>
+                <hr>
+                <h4>I can I support the developer?</h4>
+                <p>If you do wish to support the developer and site, send ISK to Kallen Ashford.</p>
+                <hr>
+              </div> 
+            </div>   
+
+            
+
         </div>
         <div class="col-xs-12 col-lg-7 map">
             <?php
@@ -887,12 +940,26 @@
                           foreach($systems as $system) { 
                               // echo $system['name'];
                             if ($system['name'] == $_SESSION['CharacterSystemName']) {
-                            echo '  <div class="system current-system" id="'.$system['name'].'" style="position: absolute; left: '.($system['x']+36).'px; top: '.($system['y']+5).'px; width: 16px; height: 16px; cursor: pointer; z-index:23; background-color: #337ab7;">
+                            echo '  <div class="system current-system" id="'.$system['name'].'" onmouseover="showSystemInfo(\''.$system['name'].'\', \''.$system['id'].'\')" onmouseout="hideSystemInfo(\''.$system['name'].'\')" style="position: absolute; left: '.($system['x']+36).'px; top: '.($system['y']+5).'px; width: 16px; height: 16px; cursor: pointer; background-color: #337ab7;">
                                       <div class="system-name"><h5>'.$system['name'].'</h5></div>
+                                      <div id="'.$system['name'].'-info" class="system-info-popup">
+                                        <div class="col-xs-12">
+                                          <h5>'.$system['name'].'</h5>    
+                                          <div id="'.$system['name'].'-sites"></div>                                      
+                                          <button onclick="setDestenation('.$system['id'].')" class="btn btn-default btn-dest">Set Destination</button>
+                                        </div>
+                                      </div>
                                   </div>';
                                 } else {
-                            echo '  <div class="system" id="'.$system['name'].'" style="position: absolute; left: '.($system['x']+36).'px; top: '.($system['y']+5).'px; width: 16px; height: 16px; cursor: pointer; z-index:23; background-color: #FFF;">
+                            echo '  <div class="system" id="'.$system['name'].'" onmouseover="showSystemInfo(\''.$system['name'].'\', \''.$system['id'].'\')" onmouseout="hideSystemInfo(\''.$system['name'].'\')" style="position: absolute; left: '.($system['x']+36).'px; top: '.($system['y']+5).'px; width: 16px; height: 16px; cursor: pointer; background-color: #FFF;">
                                       <div class="system-name"><h5>'.$system['name'].'</h5></div>
+                                      <div id="'.$system['name'].'-info" class="system-info-popup">
+                                        <div class="col-xs-12">
+                                          <h5>'.$system['name'].'</h5>
+                                          <div id="'.$system['name'].'-sites"></div>
+                                          <button onclick="setDestenation('.$system['id'].')" class="btn btn-default btn-dest">Set Destination</button>
+                                        </div>
+                                      </div>
                                   </div>';  
                                 }                                      
                           }
@@ -1089,8 +1156,8 @@
 
                 },
                 success:function (data2) {
-
-                    if (data2 == null || data2 == '' || data2 == 'NONE') {
+                    if (data2 == 'logout') {                      
+                    } else if (data2 == null || data2 == '' || data2 == 'NONE') {
                     } else {                      
                       $.ajax({
                         url:'/checkSystem.php',
@@ -1107,6 +1174,7 @@
                               // alert(3);
                                 $("#system-info").html(data);
                                 $("#jump-history").html("");
+                                $("#"+desto).css("background-color", "red");
                                                        
                                 var text = "";
                                 var i;
@@ -1131,7 +1199,21 @@
                                         if (data == null || data == '' || data == 'NONE') {
                                         } else {      
                                             $("#canvas-container").html("");
-                                            $("#canvas-container").html(data);                                            
+                                            $("#canvas-container").html(data);
+                                            $.ajax({
+                                                url:'/getSignatures.php',
+                                                type:'GET',                    
+                                                beforeSend:function () {
+
+                                                },
+                                                success:function (data) {                      
+                                                    if (data == 'NONE') {
+                                                      alert(1);
+                                                    } else {
+                                                      $("#all-sigs").html(data);                                                      
+                                                    }
+                                                }
+                                            });                                             
                                         }                            
                                     }
                                 }); 
@@ -1157,8 +1239,12 @@
         function clearRegionMap() {            
             $(".level-one").css("background-color", "white");
             $("#jump-filter").css("background-color", "white");
-            $(".system").css("background-color", "white");
-            $(".current-system").css("background-color", "#337ab7");                        
+            $(".system").css("background-color", "white");            
+            if (desto != "") {
+              $("#"+desto).css("background-color", "red");
+            }
+            // $(".current-system").css("background-color", "#337ab7");
+            
         }
 
         function showJumpHistory() {
@@ -1242,20 +1328,63 @@
       });
     </script>
     <script>
-var acc = document.getElementsByClassName("accordion");
-var i;
+      var acc = document.getElementsByClassName("accordion");
+      var i;
 
-for (i = 0; i < acc.length; i++) {
-  acc[i].onclick = function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.maxHeight){
-      panel.style.maxHeight = null;
-    } else {
-      panel.style.maxHeight = panel.scrollHeight + "px";
-    } 
-  }
-}
-</script>
+      for (i = 0; i < acc.length; i++) {
+        acc[i].onclick = function() {
+          this.classList.toggle("active");
+          var panel = this.nextElementSibling;
+          if (panel.style.maxHeight){
+            panel.style.maxHeight = null;
+          } else {
+            panel.style.maxHeight = panel.scrollHeight + "px";
+          } 
+        }
+      }
+    </script>
+
+    <script type="text/javascript">
+        function showSystemInfo(system, id) {
+          $("#"+system+"-info").css("display", "block");
+          $.ajax({
+              url:'/getSystemInfo.php',
+              type:'GET',
+              data:'system='+id,
+              beforeSend:function () {
+              },
+              success:function (data) {                                  
+                $("#"+system+"-sites").html(data);
+              }
+          });
+        }
+        function hideSystemInfo(system) {
+          $("#"+system+"-info").css("display", "none");
+        }
+        function setDestenation(system) {
+          $.ajax({
+              url:'/setDestenation.php',
+              type:'GET',
+              data:'system='+system,
+              beforeSend:function () {
+
+              },
+              success:function (data) {        
+                
+                // clearRegionMap();
+                // var obj = JSON.parse(data);
+                // for(var i in obj) {
+                //      var id = obj[i].id;
+                //      var name = obj[i].name;
+                //      $("#"+name).css("background-color", "red");
+                // }
+                desto = data;
+                clearRegionMap();
+                
+                // $("#"+data).css("background-color", "red");
+              }
+          });
+        }
+    </script>
     
 </html>
