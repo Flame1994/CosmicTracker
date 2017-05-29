@@ -6,9 +6,7 @@
     */
 	function connect() {
 
-		// $link = mysqli_connect("localhost", "root", "test", "metazombies");
-		$link = mysqli_connect("localhost", "root", "", "cosmictracker");
-		// $link = mysqli_connect("localhost", "root", "", "evebounty");
+		
 
 		if (!$link) {
 			echo "Error: Unable to connect to MySQL." . PHP_EOL;
