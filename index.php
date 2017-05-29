@@ -74,19 +74,19 @@
 		    		$info = explode("\t",$sigs[$i]);
 			    	$sig_id = $info[0];	    	
 			    	$sig_type = $info[2];	    
-			    	$sig_name = $info[3];	    	
-			    	$var = add_signature($system, $system_id, $const_name, $const_id, $region_name, $region_id, $sig_id, $sig_type, $sig_name, $reporter_name, $reporter_id, $corp_id, $alliance_id);
-			    	if ($var == false) {
+			    	$sig_name = $info[3];
+			    	if ($sig_type == '' || !isset($sig_type) || $sig_type == null) {
 			    		$has = true;
-			    	}
-		    	}
-		    	echo $has;
-		    	echo "awe";
+			    	} else {
+			    		$var = add_signature($system, $system_id, $const_name, $const_id, $region_name, $region_id, $sig_id, $sig_type, $sig_name, $reporter_name, $reporter_id, $corp_id, $alliance_id);
+				    	if ($var == false) {
+				    		$has = true;
+				    	}
+			    	}			    	
+		    	} 	
 		    	if ($has == true) {
-		    		echo "meh";
 		    		header('Location: '.'/home?s=f');
 		    	} else {
-		    		echo "lel";
 		    		header('Location: '.'/home?s=t');
 		    	}
 		    	break;

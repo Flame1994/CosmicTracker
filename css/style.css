@@ -870,3 +870,11 @@ input:checked + .slider:before {
   margin: 0;
   color: white;
 }
+
+.btn-intel {
+  background-color: #444!important;
+  border-color: #555!important;
+  color: #fff;
+  width: 100%;
+  margin-bottom: 10px;
+}

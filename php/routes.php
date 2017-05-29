@@ -11,11 +11,11 @@
 	function add_signature($system, $system_id, $const_name, $const_id, $region_name, $region_id, $sig_id, $sig_type, $sig_name, $reporter_name, $reporter_id, $corp_id, $alliance_id) {	
 		$conn = connect();
 
-		$prepared = $conn->prepare("SELECT * FROM signatures WHERE sig_id = ?"); 
-		$prepared->bind_param('s', $sig_id);    
+		$prepared = $conn->prepare("SELECT * FROM signatures WHERE sig_id = ? AND system_id = ? AND alliance_id = ?"); 
+		$prepared->bind_param('ss', $sig_id, $system_id, $alliance_id);    
 		$prepared->execute();
 		$result = get_result($prepared);
-		if ($prepared->num_rows == 0) {
+		if ($prepared->num_rows == 0 || $sig_type == '') {
 		  	$date = date('Y-m-d H:i:s', time() - 60*60*2 - 103); 				
 			$prepared = $conn->prepare("INSERT INTO `signatures` (`id`, `system`, `system_id`, `const_name`, `const_id`, `region_name`, `region_id`, `sig_id`, `sig_type`, `sig_name`, `reported`, `reported_id`, `corp_id`, `alliance_id`, `report_time`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"); 
 			$entryVal = NULL;		
@@ -24,7 +24,7 @@
 			
 
 			$prepared = $conn->prepare("SELECT * FROM users WHERE user = ?"); 
-			$prepared->bind_param('s', $reporter_name);    
+			$prepared->bind_param('s', $reporter_name);
 			$prepared->execute();
 			$result = get_result($prepared);
 			while ($row = array_shift($result)) {

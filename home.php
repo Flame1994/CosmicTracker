@@ -554,7 +554,7 @@
                                             <td><a href="https://zkillboard.com/character/'.$reportedID.'/">'.$reported.'</a></td>
                                             <td>'.$reportTime.'</td>
                                             <td>
-                                              <form id="sig-action-form" action="index.php/delete-signature" method="post" style="margin: 0;">
+                                              <form id="sig-action-form" action="delete-signature" method="post" style="margin: 0;">
                                                   <input type="hidden" name="sig_id" value="'.$sigID.'">
                                                   <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Signature" name="del_sig" value="Delete Sig" style="padding-left:6px;">
                                                     <span><i class="fa fa-times" aria-hidden="true"></i></span>
@@ -566,7 +566,6 @@
                                     
                                 }      
                                 $conn->close();
-                    
                   echo '</table>';
                       }
                     ?> 
@@ -603,39 +602,7 @@
                               $content3_1 = json_decode($url3_1, true);   
                               $region_name = $content3_1['name'];
 
-                              $url4 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_kills/?datasource=tranquility");
-                              $content4 = json_decode($url4, true);
-                              $foundKills = false;
-                              foreach($content4 as $systemKills) { 
-                                  if ($systemKills['system_id'] == $system_id) {
-                                      $foundKills = true;                                      
-                                      $kills = (int)$systemKills['ship_kills']; 
-                                      $npc_kills = (int)$systemKills['npc_kills']; 
-                                      $pod_kills = $systemKills['pod_kills']; 
-                                      $ship_kills = $kills - $npc_kills;
-                                  }                                
-                              }  
-
-                              if ($foundKills == false) {
-                                  $kills = 0; 
-                                  $npc_kills = 0; 
-                                  $pod_kills = 0; 
-                                  $ship_kills = 0;
-                              }
-
-                              $foundJumps = false;
-                              $url5 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_jumps/?datasource=tranquility");
-                              $content5 = json_decode($url5, true);
-                              foreach($content5 as $systemJumps) { 
-                                  if ($systemJumps['system_id'] == $system_id) {
-                                      $foundJumps = true;
-                                      $jumps = $systemJumps['ship_jumps'];                                     
-                                  }                                
-                              } 
-
-                              if ($foundJumps == false) {
-                                  $jumps = 0;
-                              } 
+                              
                               
                               echo '
                                   
@@ -672,26 +639,8 @@
 
                               echo '      </table>
                                       </div>
-                                      <div class="col-xs-6">
-                                          <h5>Intel (1h)</h5>
-                                          <table>
-                                              <tr>
-                                                  <td>'.$jumps.'</td>
-                                                  <td>Jumps</td>
-                                              </tr>
-                                              <tr>
-                                                  <td>'.$ship_kills.'</td>
-                                                  <td>Ship Kills</td>
-                                              </tr>
-                                              <tr>
-                                                  <td>'.$pod_kills.'</td>
-                                                  <td>Pod Kills</td>
-                                              </tr>
-                                              <tr>
-                                                  <td>'.$npc_kills.'</td>
-                                                  <td>Rat Kills</td>
-                                              </tr>
-                                          </table>
+                                      <div id="'.$system_id.'-intel" class="col-xs-6">
+                                          <button onclick="getIntel('.$system_id.')" class="btn btn-default btn-intel">Get System Intel</button>                                          
                                       </div>              
                                   </div>
                               ';
@@ -882,6 +831,9 @@
                 <h4>Who can see the scanned sites?</h4>
                 <p>Only alliance members will be able to see the sites you have scanned.</p>
                 <hr>
+                <h4>Why do some systems take so long to load?</h4>
+                <p>All information regarding the system is pulled from the EVE API's if the system has never been 'seen' by our website. This process takes a while. Once the system has been seen, all information is pulled from our own database, which should be faster. Please be patient when exploring systems our website has never seen.</p>
+                <hr>
                 <h4>I can I support the developer?</h4>
                 <p>If you do wish to support the developer and site, send ISK to Kallen Ashford.</p>
                 <hr>
@@ -929,7 +881,7 @@
             <div class="col-xs-12" id="history-container">
                 <h4 style="color: white; margin-top: 20px;">Jump History <span id="jump-filter">show</span></h4>
                 <div class="col-xs-12" id="jump-history">
-                    <span class="jump-history" onmouseover="showSystem('<?php echo $_SESSION['CharacterSystemName'] ?>')" onmouseout="hideSystem('<?php echo $_SESSION['CharacterSystemName'] ?>')" alt="<?php echo $_SESSION['CharacterSystemName'] ?>"<?php echo $_SESSION['CharacterSystemName'] ?></span>
+                    <span class="jump-history" onmouseover="showSystem('<?php echo $_SESSION['CharacterSystemName'] ?>')" onmouseout="hideSystem('<?php echo $_SESSION['CharacterSystemName'] ?>')" alt="<?php echo $_SESSION['CharacterSystemName'] ?>"><?php echo $_SESSION['CharacterSystemName'] ?></span>
                 </div>
             </div>
             <div class="col-xs-12" id="canvas-container">
@@ -1388,6 +1340,21 @@
               }
           });
         }
+    </script>
+    <script type="text/javascript">
+      function getIntel(system) {
+        $.ajax({
+            url:'/getIntel.php',
+            type:'GET',
+            data:'system='+system,
+            beforeSend:function () {
+              $("#"+system+"-intel").html("<h5>Loading Intel...</h5>");
+            },
+            success:function (data) {        
+              $("#"+system+"-intel").html(data);
+            }
+        });
+      }
     </script>
     
 </html>

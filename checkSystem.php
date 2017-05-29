@@ -3,7 +3,7 @@
 	ini_set('display_errors', 'On');
 	include "php/routes.php";
 	session_start();
-	
+
 	
 	if (isset($_SESSION['CharacterID']) && isset($_GET['system'])) {
 		$conn = connect();
@@ -85,7 +85,7 @@
 	                                    <td><a href="https://zkillboard.com/character/'.$reportedID.'/">'.$reported.'</a></td>
 	                                    <td>'.$reportTime.'</td>
 	                                    <td>
-                                            <form id="sig-action-form" action="index.php/delete-signature" method="post" style="margin: 0;">
+                                            <form id="sig-action-form" action="delete-signature" method="post" style="margin: 0;">
                                               <input type="hidden" name="sig_id" value="'.$sigID.'">
                                               <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Signature" name="del_sig" value="Delete Sig" style="padding-left:6px;">
                                                 <span><i class="fa fa-times" aria-hidden="true"></i></span>
@@ -129,39 +129,39 @@
                         	$content3_1 = json_decode($url3_1, true);   
                         	$region_name = $content3_1['name'];
 
-                            $url4 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_kills/?datasource=tranquility");
-                            $content4 = json_decode($url4, true);
-                            $foundKills = false;
-                            foreach($content4 as $systemKills) { 
-                                if ($systemKills['system_id'] == $system_id) {
-                                    $foundKills = true;		                                    
-                                    $kills = (int)$systemKills['ship_kills']; 
-                                    $npc_kills = (int)$systemKills['npc_kills']; 
-                                    $pod_kills = $systemKills['pod_kills']; 
-                                    $ship_kills = $kills - $npc_kills;
-                                }                                
-                            }  
+                            // $url4 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_kills/?datasource=tranquility");
+                            // $content4 = json_decode($url4, true);
+                            // $foundKills = false;
+                            // foreach($content4 as $systemKills) { 
+                            //     if ($systemKills['system_id'] == $system_id) {
+                            //         $foundKills = true;		                                    
+                            //         $kills = (int)$systemKills['ship_kills']; 
+                            //         $npc_kills = (int)$systemKills['npc_kills']; 
+                            //         $pod_kills = $systemKills['pod_kills']; 
+                            //         $ship_kills = $kills - $npc_kills;
+                            //     }                                
+                            // }  
 
-                            if ($foundKills == false) {
-                                $kills = 0; 
-                                $npc_kills = 0; 
-                                $pod_kills = 0; 
-                                $ship_kills = 0;
-                            }
+                            // if ($foundKills == false) {
+                            //     $kills = 0; 
+                            //     $npc_kills = 0; 
+                            //     $pod_kills = 0; 
+                            //     $ship_kills = 0;
+                            // }
 
-                            $foundJumps = false;
-                            $url5 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_jumps/?datasource=tranquility");
-                            $content5 = json_decode($url5, true);
-                            foreach($content5 as $systemJumps) { 
-                                if ($systemJumps['system_id'] == $system_id) {
-                                    $foundJumps = true;
-                                    $jumps = $systemJumps['ship_jumps'];                                     
-                                }                                
-                            } 
+                            // $foundJumps = false;
+                            // $url5 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_jumps/?datasource=tranquility");
+                            // $content5 = json_decode($url5, true);
+                            // foreach($content5 as $systemJumps) { 
+                            //     if ($systemJumps['system_id'] == $system_id) {
+                            //         $foundJumps = true;
+                            //         $jumps = $systemJumps['ship_jumps'];                                     
+                            //     }                                
+                            // } 
 
-                            if ($foundJumps == false) {
-                                $jumps = 0;
-                            } 
+                            // if ($foundJumps == false) {
+                            //     $jumps = 0;
+                            // } 
 
                             // INSERT NEIGHBOUR SYSTEMS TO DATABASE
                             $conn3 = connect();
@@ -213,27 +213,9 @@
 	                                    
 	                        echo '      </table>
 	                                </div>
-	                                <div class="col-xs-6">
-                                        <h5>Intel (1h)</h5>
-                                        <table>
-                                            <tr>
-                                                <td>'.$jumps.'</td>
-                                                <td>Jumps</td>
-                                            </tr>
-                                            <tr>
-                                                <td>'.$ship_kills.'</td>
-                                                <td>Ship Kills</td>
-                                            </tr>
-                                            <tr>
-                                                <td>'.$pod_kills.'</td>
-                                                <td>Pod Kills</td>
-                                            </tr>
-                                            <tr>
-                                                <td>'.$npc_kills.'</td>
-                                                <td>Rat Kills</td>
-                                            </tr>
-                                        </table>
-                                    </div>                          
+	                                <div id="'.$system_id.'-intel" class="col-xs-6">
+			                        	<button onclick="getIntel('.$system_id.')" class="btn btn-default btn-intel">Get System Intel</button>                                          
+			                      	</div>
 	                            </div>
 	                        ';
 	                        
@@ -346,39 +328,40 @@
             	$region_name = $row['region'];
             	$region_id = $row['region_id'];
 
-            	$url4 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_kills/?datasource=tranquility");
-                $content4 = json_decode($url4, true);
-                $foundKills = false;
-                foreach($content4 as $systemKills) { 
-                    if ($systemKills['system_id'] == $system_id) {
-                        $foundKills = true;		                                    
-                        $kills = (int)$systemKills['ship_kills']; 
-                        $npc_kills = (int)$systemKills['npc_kills']; 
-                        $pod_kills = $systemKills['pod_kills']; 
-                        $ship_kills = $kills - $npc_kills;
-                    }                                
-                }  
+            	// $url4 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_kills/?datasource=tranquility");
+             //    $content4 = json_decode($url4, true);
+             //    $foundKills = false;
+             //    foreach($content4 as $systemKills) { 
+             //        if ($systemKills['system_id'] == $system_id) {
+             //            $foundKills = true;		                                    
+             //            $kills = (int)$systemKills['ship_kills']; 
+             //            $npc_kills = (int)$systemKills['npc_kills']; 
+             //            $pod_kills = $systemKills['pod_kills']; 
+             //            $ship_kills = $kills - $npc_kills;
+             //        }                                
+             //    }  
 
-                if ($foundKills == false) {
-                    $kills = 0; 
-                    $npc_kills = 0; 
-                    $pod_kills = 0; 
-                    $ship_kills = 0;
-                }
+             //    if ($foundKills == false) {
+             //        $kills = 0; 
+             //        $npc_kills = 0; 
+             //        $pod_kills = 0; 
+             //        $ship_kills = 0;
+             //    }
 
-                $foundJumps = false;
-                $url5 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_jumps/?datasource=tranquility");
-                $content5 = json_decode($url5, true);
-                foreach($content5 as $systemJumps) { 
-                    if ($systemJumps['system_id'] == $neighbour_id) {
-                        $foundJumps = true;
-                        $jumps = $systemJumps['ship_jumps'];                                     
-                    }                                
-                } 
+             //    $foundJumps = false;
+             //    $url5 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_jumps/?datasource=tranquility");
+             //    $content5 = json_decode($url5, true);
+             //    foreach($content5 as $systemJumps) { 
+             //        if ($systemJumps['system_id'] == $neighbour_id) {
+             //            $foundJumps = true;
+             //            $jumps = $systemJumps['ship_jumps'];                                     
+             //        }                                
+             //    } 
 
-                if ($foundJumps == false) {
-                    $jumps = 0;
-                } 
+             //    if ($foundJumps == false) {
+             //        $jumps = 0;
+             //    } 
+
 
                 echo '
 	                            
@@ -415,27 +398,9 @@
                             
                 echo '      </table>
                         </div>
-                        <div class="col-xs-6">
-                            <h5>Intel (1h)</h5>
-                            <table>
-                                <tr>
-                                    <td>'.$jumps.'</td>
-                                    <td>Jumps</td>
-                                </tr>
-                                <tr>
-                                    <td>'.$ship_kills.'</td>
-                                    <td>Ship Kills</td>
-                                </tr>
-                                <tr>
-                                    <td>'.$pod_kills.'</td>
-                                    <td>Pod Kills</td>
-                                </tr>
-                                <tr>
-                                    <td>'.$npc_kills.'</td>
-                                    <td>Rat Kills</td>
-                                </tr>
-                            </table>
-                        </div>                          
+                        <div id="'.$neighbour_id.'-intel" class="col-xs-6">
+                        	<button onclick="getIntel('.$neighbour_id.')" class="btn btn-default btn-intel">Get System Intel</button>                                          
+                      	</div>   
                     </div>
                 ';
             }
