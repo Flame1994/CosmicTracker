@@ -1,4 +1,7 @@
 <?php
+	// ============================================================================
+    // Updates and displays the signatures when jumping to a new region
+    // ============================================================================
 	include "php/routes.php";
 	session_start();
 	if (isset($_SESSION['CharacterRegionName'])) {	

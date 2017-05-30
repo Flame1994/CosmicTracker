@@ -1,13 +1,11 @@
 <?php
 	include "php/connect.php";
-	/**
-	 * Navigates the browser to the home page.
-	*/
-	function home_page() {
-		// header('Location: '.'/EveBounty/home');
+
+	function home_page() {		
 		header('Location: '.'/home');
 	}
 
+	// Add the signature to the database
 	function add_signature($system, $system_id, $const_name, $const_id, $region_name, $region_id, $sig_id, $sig_type, $sig_name, $reporter_name, $reporter_id, $corp_id, $alliance_id) {	
 		$conn = connect();
 
@@ -73,6 +71,7 @@
 		}
 	}
 
+	// Delete the signature
 	function delete_signature($sig_id) {
 		$conn = connect();
 		$prepared = $conn->prepare("DELETE FROM signatures WHERE sig_id = ?"); 
@@ -87,8 +86,6 @@
 		// Unset all of the session variables.
 		$_SESSION = array();
 
-		// If it's desired to kill the session, also delete the session cookie.
-		// Note: This will destroy the session, and not just the session data!
 		if (ini_get("session.use_cookies")) {
 		    $params = session_get_cookie_params();
 		    setcookie(session_name(), '', time() - 42000,

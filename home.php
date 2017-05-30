@@ -69,16 +69,10 @@
         <link href='https://fonts.googleapis.com/css?family=Kaushan+Script|Herr+Von+Muellerhoff' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Istok+Web|Roboto+Condensed:700' rel='stylesheet' type='text/css'>
-        <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/bootstrap.css">
         <link rel="stylesheet" href="css/style.css">
-        <!-- <script src="js/jquery.min.js"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+        <link rel="icon" href="img/logo.ico" />
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -93,8 +87,6 @@
             var queue = [];
             queue.push("<?php echo $_SESSION['CharacterSystemName'] ?>");
             var desto = "";
-            // var i = queue.shift(); // queue is now [5]
-            // alert(i);              // displays 2   
         </script>
         
         <script type="text/javascript">
@@ -362,32 +354,7 @@
             }
         </script>
     </head>
-    <body class="homepage" id="content-block">
-        <div class="col-xs-12 output-test">
-          <?php
-
-            // $myObj = new stdClass();
-            // $url = 'https://crest-tq.eveonline.com/characters/'.$_SESSION['CharacterID'].'/ui/autopilot/waypoints/';
-            // $myObj->clearOtherWaypoints = true;
-            // $myObj->first = true;
-            // $myObj->solarSystem->href = "https://crest-tq.eveonline.com/solarsystems/30003151/";
-            // $myObj->solarSystem->id = 30003151;
-
-            // $myJSON = json_encode($myObj);
-            // echo $myJSON;
-
-            // $options = array(
-            //     'http' => array(
-            //         'header'  => "Authorization: Bearer ".$_SESSION['AccessToken']."\r\nContent-type: application/json",
-            //         'method'  => 'POST',
-            //         'content' => $myJSON
-            //     )
-            // );
-            // $context  = stream_context_create($options);
-            // $result = file_get_contents($url, false, $context);
-
-          ?>
-        </div>
+    <body class="homepage" id="content-block">        
         <canvas id="backdrop" style="position: absolute;"></canvas>
         <div class="col-xs-12 col-lg-5 side-panel" id="system-info-container">
             <div class="col-xs-12 profile-info">
@@ -706,7 +673,8 @@
                       <?php
                           $conn = connect();
 
-                          $prepared = $conn->prepare("SELECT SUM(relic_sites) as relicTotal, SUM(data_sites) as dataTotal, SUM(combat_sites) as combatTotal, SUM(gas_sites) as gasTotal, SUM(wormholes) as wormholeTotal FROM users");
+                          $prepared = $conn->prepare("SELECT SUM(relic_sites) as relicTotal, SUM(data_sites) as dataTotal, SUM(combat_sites) as combatTotal, SUM(gas_sites) as gasTotal, SUM(wormholes) as wormholeTotal FROM users WHERE alliance_id = ?");
+                          $prepared->bind_param('s', $_SESSION['CharacterAllianceID']);   
                           $prepared->execute();
                           $result = get_result($prepared);
                           while ($row = array_shift($result)) {
@@ -834,7 +802,7 @@
                 <h4>Why do some systems take so long to load?</h4>
                 <p>All information regarding the system is pulled from the EVE API's if the system has never been 'seen' by our website. This process takes a while. Once the system has been seen, all information is pulled from our own database, which should be faster. Please be patient when exploring systems our website has never seen.</p>
                 <hr>
-                <h4>I can I support the developer?</h4>
+                <h4>How can I support the developer?</h4>
                 <p>If you do wish to support the developer and site, send ISK to Kallen Ashford.</p>
                 <hr>
               </div> 
@@ -892,8 +860,7 @@
                           $url = file_get_contents("maps/".$r.".svg.json");
                           $content = json_decode($url, true);
                           $systems = $content['map']['systems'];
-                          foreach($systems as $system) { 
-                              // echo $system['name'];
+                          foreach($systems as $system) {                               
                             if ($system['name'] == $_SESSION['CharacterSystemName']) {
                             echo '  <div class="system current-system" id="'.$system['name'].'" onmouseover="showSystemInfo(\''.$system['name'].'\', \''.$system['id'].'\')" onmouseout="hideSystemInfo(\''.$system['name'].'\')" style="position: absolute; left: '.($system['x']+36).'px; top: '.($system['y']+5).'px; width: 16px; height: 16px; cursor: pointer; background-color: #337ab7;">
                                       <div class="system-name"><h5>'.$system['name'].'</h5></div>
@@ -1118,15 +1085,11 @@
                         url:'/checkSystem.php',
                         type:'GET',
                         data:'system='+data2,
-                        beforeSend:function () {
-                            // alert(1);
+                        beforeSend:function () {                            
                         },
                         success:function (data) {
-                            // alert(data);
                             if (data == null || data == '' || data == 'NONE') {
-                              // alert(2);
                             } else {
-                              // alert(3);
                                 $("#system-info").html(data);
                                 $("#jump-history").html("");
                                 $("#"+desto).css("background-color", "red");
@@ -1137,8 +1100,7 @@
                                     queue.shift();
                                 }
                                 for (i = 0; i < queue.length; i++) {
-                                    text += "> <span class= \"jump-history\" onmouseover=\"showSystem(\'"+queue[i]+"\')\" onmouseout=\"hideSystem(\'"+queue[i]+"\')\" alt=\""+queue[i]+"\">"+queue[i]+"</span> ";
-                                    //<span class="jump-history" onmouseover="showSystem('D-PNP9')" onmouseout="hideSystem('D-PNP9')" alt="D-PNP9">D-PNP9</span>
+                                    text += "> <span class= \"jump-history\" onmouseover=\"showSystem(\'"+queue[i]+"\')\" onmouseout=\"hideSystem(\'"+queue[i]+"\')\" alt=\""+queue[i]+"\">"+queue[i]+"</span> ";                                    
                                 }
                                 text += "</h4>";
 
@@ -1179,7 +1141,7 @@
                   }
             });             
           });          
-        }, 1000*5); // where X is your every X minutes
+        }, 1000*5);
     </script>  
     <script type="text/javascript">
         function showSystem(system) {            
@@ -1197,9 +1159,7 @@
             $(".system").css("background-color", "white");            
             if (desto != "") {
               $("#"+desto).css("background-color", "red");
-            }
-            // $(".current-system").css("background-color", "#337ab7");
-            
+            }            
         }
 
         function showJumpHistory() {
@@ -1325,18 +1285,8 @@
 
               },
               success:function (data) {        
-                
-                // clearRegionMap();
-                // var obj = JSON.parse(data);
-                // for(var i in obj) {
-                //      var id = obj[i].id;
-                //      var name = obj[i].name;
-                //      $("#"+name).css("background-color", "red");
-                // }
                 desto = data;
-                clearRegionMap();
-                
-                // $("#"+data).css("background-color", "red");
+                clearRegionMap();                
               }
           });
         }

@@ -1,6 +1,11 @@
 <?php
+	// ============================================================================
+	// Checks if player has jumped to a new region and loads the region map, if so.
+	// ============================================================================
+
 	include "php/routes.php";
 	session_start();	
+
 	if (isset($_SESSION['CharacterID']) && isset($_GET['system'])) {
 		$conn = connect();
 		$main_system_id = $_GET['system'];
@@ -9,6 +14,9 @@
         $prepared->execute();
         $result = get_result($prepared);
         if ($prepared->num_rows == 0) {
+        	// If system has not been stored in database
+
+        	// Get system info
         	$url = file_get_contents("https://esi.tech.ccp.is/dev/universe/systems/".$main_system_id."/?datasource=tranquility&language=en-us");
 	        $content = json_decode($url, true);
 			$const_id = $content['constellation_id'];
@@ -22,7 +30,11 @@
 			$url3 = file_get_contents("https://esi.tech.ccp.is/latest/universe/regions/".$region_id."/?datasource=tranquility&language=en-us");
 			$content3 = json_decode($url3, true);   
 			$region_name = $content3['name'];
+
+			// Checks if the region of the current system is the same as the region stored in the session
 			if ($region_name != $_SESSION['CharacterRegionName']) {
+
+				// If not, update the region info and load new map
 		    	$_SESSION["CharacterRegionName"] = $region_name;
 				$_SESSION["CharacterRegionID"] = $region_id;	
 				echo '<canvas id="canvas" width="1000" height="800"></canvas>';
@@ -43,10 +55,15 @@
 		    }
 
         } else {
+        	// If system has been stored in database
+
+        	// Get system info from database
         	while ($row = array_shift($result)) {
 	        	$region_name = $row['region'];
 	        	$region_id = $row['region_id'];
 			}
+
+			// Checks if the region of the current system is the same as the region stored in the session
 			if ($region_name != $_SESSION['CharacterRegionName']) {
 		    	$_SESSION["CharacterRegionName"] = $region_name;
 				$_SESSION["CharacterRegionID"] = $region_id;	

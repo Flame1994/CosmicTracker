@@ -4,9 +4,8 @@
      *
      * @return link - the link to the database.
     */
-	function connect() {
-
-		
+	function connect() {		
+		$link = mysqli_connect("host", "username", "password", "database");		
 
 		if (!$link) {
 			echo "Error: Unable to connect to MySQL." . PHP_EOL;
@@ -73,22 +72,5 @@
     */
 	function close($link) {
 		mysqli_close($link);
-	}
-
-	function update_pass($email, $new_pass) {
-
-		$link = connect();
-		$new_pass = md5($new_pass."b");
-		if (!$link) {
-	    	die("Connection failed: " . mysqli_connect_error());
-		}
-		$sql = "UPDATE Users SET Password='$new_pass' WHERE Email='$email'";
-		if (mysqli_query($link, $sql)) {
-    		echo "Record updated successfully";
-		} else {
-   		 	echo "Error updating record: " . mysqli_error($link);
-   		 	exit;
-		}
-		mysqli_close($conn);
-	}
+	}	
 ?>

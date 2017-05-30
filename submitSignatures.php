@@ -1,12 +1,10 @@
 <?php
-	error_reporting(E_ALL);
-	ini_set('display_errors', 'On');
 	include "php/routes.php";
 	session_start();
 	if (isset($_POST['text'])) {
-		$sigs = explode("\n", $text);    	
-    	$system = $_SESSION["CharacterSystemName"];
-    	$system_id = $_SESSION["CharacterSystemID"];
+		    $sigs = explode("\n", $text);    	
+        $system = $_SESSION["CharacterSystemName"];
+        $system_id = $_SESSION["CharacterSystemID"];
 
 
         $url = file_get_contents("https://esi.tech.ccp.is/dev/universe/systems/".$system_id."/?datasource=tranquility&language=en-us");
@@ -23,25 +21,25 @@
         $region_name = $content3['name'];    	
 
         $reporter_name = $_SESSION["CharacterName"];
-	   	$reporter_id = $_SESSION["CharacterID"];
-	   	$corp_id = $_SESSION["CharacterCorpID"];
-	   	$alliance_id = $_SESSION["CharacterAllianceID"];
-	   	$has = false;
-    	for ($i=0; $i < sizeof($sigs); $i++) { 
-    		$info = explode("\t",$sigs[$i]);
-	    	$sig_id = $info[0];	    	
-	    	$sig_type = $info[2];	    
-	    	$sig_name = $info[3];
-	    	if ($sig_type == '' || !isset($sig_type) || $sig_type == null) {
-	    		$has = true;
-	    	} else {
-	    		$var = add_signature($system, $system_id, $const_name, $const_id, $region_name, $region_id, $sig_id, $sig_type, $sig_name, $reporter_name, $reporter_id, $corp_id, $alliance_id);
-		    	if ($var == false) {
-		    		$has = true;
-		    	}
-	    	}			    	
-    	} 	
-    	if ($has == true) {
+  	   	$reporter_id = $_SESSION["CharacterID"];
+  	   	$corp_id = $_SESSION["CharacterCorpID"];
+  	   	$alliance_id = $_SESSION["CharacterAllianceID"];
+  	   	$has = false;
+      	for ($i=0; $i < sizeof($sigs); $i++) { 
+      		$info = explode("\t",$sigs[$i]);
+  	    	$sig_id = $info[0];	    	
+  	    	$sig_type = $info[2];	    
+  	    	$sig_name = $info[3];
+  	    	if ($sig_type == '' || !isset($sig_type) || $sig_type == null) {
+  	    		$has = true;
+  	    	} else {
+  	    		$var = add_signature($system, $system_id, $const_name, $const_id, $region_name, $region_id, $sig_id, $sig_type, $sig_name, $reporter_name, $reporter_id, $corp_id, $alliance_id);
+  		    	if ($var == false) {
+  		    		$has = true;
+  		    	}
+  	    	}			    	
+      	} 	
+      	if ($has == true) {
     		echo '
               <div class="col-xs-12">
                 <div class="col-md-2"></div>
@@ -51,7 +49,7 @@
                 </div>  
               </div>
             ';
-    		if (isset($_SESSION['CharacterSystemName']) && $_SESSION['CharacterSystemName'] != '' && !is_null($_SESSION['CharacterSystemName'])) {
+    		  if (isset($_SESSION['CharacterSystemName']) && $_SESSION['CharacterSystemName'] != '' && !is_null($_SESSION['CharacterSystemName'])) {
                 echo '
                 <div class="col-xs-12 signature-list">
                   	<table>

@@ -25,6 +25,7 @@
         <link rel="stylesheet" href="css/bootstrap.css">
         <link rel="stylesheet" href="css/login.css">
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="icon" href="img/logo.ico" />
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <title>
@@ -276,8 +277,7 @@
         <canvas id="backdrop" style="position: absolute;"></canvas>
         <h1 id="name"> COSMIC TRACKER</h1>
         <img id="ship" src="img/ship.png">
-        <div id="login-container">
-            <!-- <img id="logo" src="img/logo.png"> -->
+        <div id="login-container">            
             <h1>Welcome</h1>
             <h5>Please Login to start exploring!</h5>
             <?php

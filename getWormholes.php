@@ -1,4 +1,7 @@
 <?php
+    // ============================================================================
+    // Loads all wormholes scanned in the region
+    // ============================================================================
 	include "php/routes.php";
 	session_start();
     if (isset($_SESSION['CharacterRegionName'])) {

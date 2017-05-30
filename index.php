@@ -43,10 +43,6 @@
 		    	break;
 		    case 'signature':
 		    	$data = $_POST['sigdata'];
-		    	// echo "$data";
-		    	// QSQ-900	Cosmic Signature	Combat Site		43,9%	3,66 AU
-		    	// QSQ-922	Cosmic Signature	Combat Site	Radiance	99,1%	3,68 AU
-
 		    	$sigs = explode("\n", $data);    	
 		    	$system = $_SESSION["CharacterSystemName"];
 		    	$system_id = $_SESSION["CharacterSystemID"];

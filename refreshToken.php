@@ -1,4 +1,7 @@
 <?php
+	// ============================================================================
+    // Refreshes the token
+    // ============================================================================
 	session_start();
 	if (isset($_SESSION["AccessToken"])) {
 		$url = 'https://login.eveonline.com/oauth/token';

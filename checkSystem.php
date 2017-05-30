@@ -1,19 +1,24 @@
 <?php
-	error_reporting(E_ALL);
-	ini_set('display_errors', 'On');
+	// ============================================================================
+	// Updates the website if a player enters a new solar system
+	// ============================================================================
+
 	include "php/routes.php";
 	session_start();
-
-	
+	// Check if required parameters are set
 	if (isset($_SESSION['CharacterID']) && isset($_GET['system'])) {
+
+		// update and store neighbouring systems on each solar system a player visits
 		$conn = connect();
 		$main_system_id = "".$_GET['system']."";
 		$prepared = $conn->prepare("SELECT * FROM neighbours WHERE system_id = ?"); 
         $prepared->bind_param('s', $main_system_id);    
         $prepared->execute();
         $result = get_result($prepared);
-        if ($prepared->num_rows == 0) {        	
-            // SYSTEM NOT YET IN DATABASE;
+        if ($prepared->num_rows == 0) {
+            // System not yet in database
+
+            // Get information about system
             $url = file_get_contents("https://esi.tech.ccp.is/dev/universe/systems/".$_GET['system']."/?datasource=tranquility&language=en-us");
 	        $content = json_decode($url, true);
 			$const_id = $content['constellation_id'];
@@ -28,9 +33,7 @@
 			$content3 = json_decode($url3, true);   
 			$region_name = $content3['name'];
 							
-			echo '
-			
-            		            
+			echo '         
 	            <div class="col-xs-12" style="background-color: #333;">
 	                <h2>Current System: <span class="text-primary">';
 	                
@@ -62,7 +65,7 @@
                             <th>Time</th>
                             <th></th>
 	                    </tr>';
-	                    
+	                    	// Display signatures of system
 	                    	$conn2 = connect();
 	                        $prepared2 = $conn2->prepare("SELECT * FROM signatures WHERE system_id = ?"); 
 	                        $prepared2->bind_param('s', $main_system_id);    
@@ -96,14 +99,13 @@
 	                            ';
 	                            
 	                        }   
-	                        $conn2->close();       
-	                        
-	                 
+	                        $conn2->close();
 	        echo '  </table>
 	            </div>
 	            <div class="col-xs-12 intel">
 	                <h4>Neighbouring Systems</h4>
-	                <hr style="padding: 0; margin: 0;">';                            
+	                <hr style="padding: 0; margin: 0;">';
+	                	// Get systems intel
 	                    $url = file_get_contents("https://esi.tech.ccp.is/dev/universe/systems/".$_GET['system']."/?datasource=tranquility&language=en-us");
 	                    $content = json_decode($url, true);
 	                    $stargates = $content['stargates'];
@@ -129,41 +131,7 @@
                         	$content3_1 = json_decode($url3_1, true);   
                         	$region_name = $content3_1['name'];
 
-                            // $url4 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_kills/?datasource=tranquility");
-                            // $content4 = json_decode($url4, true);
-                            // $foundKills = false;
-                            // foreach($content4 as $systemKills) { 
-                            //     if ($systemKills['system_id'] == $system_id) {
-                            //         $foundKills = true;		                                    
-                            //         $kills = (int)$systemKills['ship_kills']; 
-                            //         $npc_kills = (int)$systemKills['npc_kills']; 
-                            //         $pod_kills = $systemKills['pod_kills']; 
-                            //         $ship_kills = $kills - $npc_kills;
-                            //     }                                
-                            // }  
-
-                            // if ($foundKills == false) {
-                            //     $kills = 0; 
-                            //     $npc_kills = 0; 
-                            //     $pod_kills = 0; 
-                            //     $ship_kills = 0;
-                            // }
-
-                            // $foundJumps = false;
-                            // $url5 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_jumps/?datasource=tranquility");
-                            // $content5 = json_decode($url5, true);
-                            // foreach($content5 as $systemJumps) { 
-                            //     if ($systemJumps['system_id'] == $system_id) {
-                            //         $foundJumps = true;
-                            //         $jumps = $systemJumps['ship_jumps'];                                     
-                            //     }                                
-                            // } 
-
-                            // if ($foundJumps == false) {
-                            //     $jumps = 0;
-                            // } 
-
-                            // INSERT NEIGHBOUR SYSTEMS TO DATABASE
+                            // Insert neighbour systems to database
                             $conn3 = connect();
                             $prepared3 = $conn3->prepare("SELECT * FROM neighbours WHERE system_id = ? AND neighbour = ?"); 
                             $prepared3->bind_param('ss', $main_system_id, $system_name);    
@@ -231,7 +199,10 @@
                     
 		        </script>
 			';
-        } else {        	
+        } else {     
+        	// System is in database
+
+        	// Get system info
         	$conn0 = connect();
         	$prepared0 = $conn->prepare("SELECT * FROM neighbours WHERE neighbour_id = ?"); 
 	        $prepared0->bind_param('s', $main_system_id);    
@@ -275,7 +246,7 @@
                             <th>Time</th>
                             <th></th>
 	                    </tr>';
-	                    
+	                    	// Get system signatures
 	                    	$conn2 = connect();
 	                        $prepared2 = $conn2->prepare("SELECT * FROM signatures WHERE system_id = ?"); 
 	                        $prepared2->bind_param('s', $main_system_id);    
@@ -298,7 +269,7 @@
 	                                    <td><a href="https://zkillboard.com/character/'.$reportedID.'/">'.$reported.'</a></td>
 	                                    <td>'.$reportTime.'</td>
 	                                    <td>
-                                            <form id="sig-action-form" action="index.php/delete-signature" method="post" style="margin: 0;">
+                                            <form id="sig-action-form" action="delete-signature" method="post" style="margin: 0;">
                                               <input type="hidden" name="sig_id" value="'.$sigID.'">
                                               <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Signature" name="del_sig" value="Delete Sig" style="padding-left:6px;">
                                                 <span><i class="fa fa-times" aria-hidden="true"></i></span>
@@ -316,7 +287,8 @@
 	            </div>';
          echo ' <div class="col-xs-12 intel">
                 	<h4>Neighbouring Systems</h4>
-                	<hr style="padding: 0; margin: 0;">';                  	
+                	<hr style="padding: 0; margin: 0;">';    
+            // Get system intel              	
             while ($row = array_shift($result)) {
             	$system_name = $row['system'];
             	$system_id = $row['system_id'];
@@ -327,42 +299,6 @@
             	$const_id = $row['const_id'];
             	$region_name = $row['region'];
             	$region_id = $row['region_id'];
-
-            	// $url4 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_kills/?datasource=tranquility");
-             //    $content4 = json_decode($url4, true);
-             //    $foundKills = false;
-             //    foreach($content4 as $systemKills) { 
-             //        if ($systemKills['system_id'] == $system_id) {
-             //            $foundKills = true;		                                    
-             //            $kills = (int)$systemKills['ship_kills']; 
-             //            $npc_kills = (int)$systemKills['npc_kills']; 
-             //            $pod_kills = $systemKills['pod_kills']; 
-             //            $ship_kills = $kills - $npc_kills;
-             //        }                                
-             //    }  
-
-             //    if ($foundKills == false) {
-             //        $kills = 0; 
-             //        $npc_kills = 0; 
-             //        $pod_kills = 0; 
-             //        $ship_kills = 0;
-             //    }
-
-             //    $foundJumps = false;
-             //    $url5 = file_get_contents("https://esi.tech.ccp.is/latest/universe/system_jumps/?datasource=tranquility");
-             //    $content5 = json_decode($url5, true);
-             //    foreach($content5 as $systemJumps) { 
-             //        if ($systemJumps['system_id'] == $neighbour_id) {
-             //            $foundJumps = true;
-             //            $jumps = $systemJumps['ship_jumps'];                                     
-             //        }                                
-             //    } 
-
-             //    if ($foundJumps == false) {
-             //        $jumps = 0;
-             //    } 
-
-
                 echo '
 	                            
                     <div class="col-xs-12 intel-system">

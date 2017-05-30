@@ -1,22 +1,26 @@
 <?php
+	// ============================================================================
+    // Handles character location. This script is called every 5 seconds to check
+	// if user has entered a new system. If so, return the system id.
+    // ============================================================================
+
 	include "php/routes.php";
 	session_start();
 	$url = file_get_contents("https://crest-tq.eveonline.com/");
     $content = json_decode($url, true);
 
+    // Check if eve is online
     $serviceStatus =  $content['serviceStatus'];
     $serverCount =  $content['userCount_str'];
     if ($serviceStatus != 'online') {
       echo "logout";
-    } else {
+    } else {    	
     	if (isset($_SESSION['CharacterID'])) {
+    		// Get character location
 			$charid = $_SESSION['CharacterID'];
 			$access = $_SESSION['AccessToken'];
 			$url2 = 'https://crest-tq.eveonline.com/characters/'.$charid.'/location/';
 			
-			// use key 'http' even if you send the request to https://...
-
-			// $key = 'yls9vXaxcquP0OnAsUMkGQETSngEN-1e9xcWHWjdCvE4H-OPhMv7TMDe2AefIsLy2rdAIQz-kKypS1u1Bu8Z2w2';
 			$options2 = array(
 			    'http' => array(
 			        'header'  => "Authorization: Bearer ".$access."\r\n",
@@ -34,6 +38,7 @@
 					$_SESSION["CharacterSystemName"] = "";
 					$_SESSION["CharacterSystemID"] = "";			
 				} else {
+					// Set and save location
 					$main_system_id = $content2['solarSystem']['id'];
 					$main_system_name = $content2['solarSystem']['name'];
 					$system_href = $content2['solarSystem']['href'];

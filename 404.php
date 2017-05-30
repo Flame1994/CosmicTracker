@@ -38,7 +38,7 @@
 
     </style>
     <body class="container-fluid homepage">
-        <h3>It seems that you're lost in a perpetual black hole.</h3>
+        <h3 style="color: white;">It seems that you're lost in a perpetual black hole.</h3>
         <canvas id="particle"></canvas>
     </body>
     <script type="text/javascript">

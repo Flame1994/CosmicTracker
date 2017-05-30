@@ -1,4 +1,8 @@
 <?php	
+	// ============================================================================
+    // Sets the destination for the player ingame
+    // ============================================================================
+
 	include "php/routes.php";
 	session_start();
 	if (isset($_GET['system'])) {
@@ -16,6 +20,9 @@
 	// 	        'content' => http_build_query($data)
 	// 	    )
 	// 	);	
+
+
+		// Sets the desination ingame
 		$myObj = new stdClass();
 	    $url = 'https://crest-tq.eveonline.com/characters/'.$_SESSION['CharacterID'].'/ui/autopilot/waypoints/';
 	    $myObj->clearOtherWaypoints = true;
@@ -34,24 +41,6 @@
 	    $context  = stream_context_create($options);
 	    $result = file_get_contents($url, false, $context);
 
-
-	 //    $url = file_get_contents("https://esi.tech.ccp.is/latest/route/".$_SESSION['CharacterSystemID']."/".$desto."/?datasource=tranquility&flag=shortest");
-		// $content = json_decode($url, true);
-		// $d = array();
-		
-		// foreach ($content as $obj) {
-
-		// 	$url2 = file_get_contents("https://esi.tech.ccp.is/latest/universe/systems/".$obj."/?datasource=tranquility&language=en-us");
-		// 	$content2 = json_decode($url2, true);
-		// 	$name = $content2['name'];
-		// 	$d[] = array('id' => $obj ,'name' => $name);		
-		// }
-
-	    // echo json_encode($d);
-
-
-
-	    // -------------------------- JUST DESTO ------------------------
 	    $url2 = file_get_contents("https://esi.tech.ccp.is/latest/universe/systems/".$desto."/?datasource=tranquility&language=en-us");
 	    $content2 = json_decode($url2, true);
 	    $name = $content2['name'];
