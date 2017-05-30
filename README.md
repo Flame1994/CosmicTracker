@@ -6,9 +6,15 @@ This is a set of code that is a work in progress and will be changed as it is be
 
 # Requirements
 This build uses a wamp/lampp stack. The most robust solution to hosting this site would be to use this stack.
-See: https://www.apachefriends.org/index.html from information regarding the stack.
+See: https://www.apachefriends.org/index.html for information regarding the stack.
 
 Used on this site:
 - MySQL
 - PHP
 - phpmyadmin
+
+# License
+Cosmic Tracker is released under the GNU Affero General Public License, version 3. See the LICENSE.md file for more information.
+
+# Eve Online
+All EVE related materials are property of CCP Games. See the full license in the CCP.md file.
