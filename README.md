@@ -14,7 +14,7 @@ Used on this site:
 - phpmyadmin
 
 # License
-Cosmic Tracker is released under the GNU Affero General Public License, version 3. See the LICENSE.md file for more information.
+Cosmic Tracker is released under the GNU Affero General Public License, version 3. See the `LICENSE.md` file for more information.
 
 # Eve Online
-All EVE related materials are property of CCP Games. See the full license in the CCP.md file.
+All EVE related materials are property of [CCP Games](https://www.ccpgames.com/). See the full license in the `CCP.md` file.
