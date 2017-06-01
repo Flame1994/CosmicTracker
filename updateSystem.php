@@ -16,7 +16,6 @@
       echo "logout";
     } else {    	
     	if (isset($_SESSION['CharacterID'])) {
-    		// Get character location
 			$charid = $_SESSION['CharacterID'];
 			$access = $_SESSION['AccessToken'];
 			$url2 = 'https://crest-tq.eveonline.com/characters/'.$charid.'/location/';
