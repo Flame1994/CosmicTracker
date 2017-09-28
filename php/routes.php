@@ -78,6 +78,8 @@
 	    $prepared->bind_param('s', $sig_id);    
 	    $prepared->execute();
 	    $conn->close();
+
+	    return true;
 	}
 
 	function logout() {

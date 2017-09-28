@@ -53,7 +53,54 @@
 	                    <textarea id="sigdata" name="sigdata" placeholder="Add signature results" style="width:100%; color:#333333; font-size:12px" rows="4"></textarea>
 	                    <button type="submit" name="Submit" id="Submit" class="btn btn-default">Submit</button>
 	                </form>
+	                <script>
+                            $(function () {
+
+                              $(\'#add-sig\').on(\'submit\', function (e) {
+
+                                e.preventDefault();          
+                                $.ajax({
+                                  type: \'POST\',
+                                  url: \'/sigadd.php\',
+                                  data: $(\'#add-sig\').serialize(),
+                                  success: function (data) {
+                                    if (data == "false") {
+                                      $(\'#sig-report\').html("<div class=\"col-md-2\"></div>\
+                                                <div class=\"col-xs-12 col-md-8 notification-container notification-failed\">\
+                                                  <div class=\"notification-left\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></div>\
+                                                  <div class=\"notification-right\"><div class=\"notification-note\">A signature failed to add.</div></div>\
+                                                </div>");
+                                    } else if (data == "true") {
+                                      $(\'#sig-report\').html("<div class=\"col-md-2\"></div>\
+                                                <div class=\"col-xs-12 col-md-8 notification-container notification-success\">\
+                                                  <div class=\"notification-left\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></div>\
+                                                  <div class=\"notification-right\"><div class=\"notification-note\">All Signatures added.</div></div> \
+                                                </div>");
+
+                                      $.ajax({
+                                          url:\'/getSystemSigs.php\',
+                                          type:\'GET\',                    
+                                          beforeSend:function () {
+
+                                          },
+                                          success:function (data) {                                            
+                                            $(".signature-list").html("");
+                                            $(".signature-list").html(data);                                                      
+                                              
+                                          }
+                                      });     
+                                    }
+                                  }
+                                });
+
+                              });
+
+                            });
+                          </script>
 	            </div>
+	            <div id="sig-report" class="col-xs-12">
+
+                </div>
 	            <div class="col-xs-12 signature-list">
 	                <table>
 	                    <tr>
@@ -71,6 +118,7 @@
 	                        $prepared2->bind_param('s', $main_system_id);    
 	                        $prepared2->execute();
 	                        $result2 = get_result($prepared2);
+	                        $count = 0;
 	                        while ($row2 = array_shift($result2)) {
 	                            $system = $row2['system'];
 	                            $sigID = $row2['sig_id'];
@@ -88,19 +136,52 @@
 	                                    <td><a href="https://zkillboard.com/character/'.$reportedID.'/">'.$reported.'</a></td>
 	                                    <td>'.$reportTime.'</td>
 	                                    <td>
-                                            <form id="sig-action-form" action="delete-signature" method="post" style="margin: 0;">
-                                              <input type="hidden" name="sig_id" value="'.$sigID.'">
-                                              <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Signature" name="del_sig" value="Delete Sig" style="padding-left:6px;">
-                                                <span><i class="fa fa-times" aria-hidden="true"></i></span>
-                                              </button>
-                                          	</form>
+                                            <form id="delete-sig-'.$count.'" class="delete-sig" enctype="multipart/form-data" method="post">
+				                                  <input type="hidden" name="sig_id" value="'.$sigID.'">
+				                                  <button id="Submit" type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Signature" name="Submit" value="Delete Sig" style="padding-left:6px;">
+				                                    <span><i class="fa fa-times" aria-hidden="true"></i></span>
+				                                  </button>                                  
+				                              </form>          
                                         </td>
 	                                </tr>
 	                            ';
-	                            
+	                            $count = $count + 1;
 	                        }   
 	                        $conn2->close();
 	        echo '  </table>
+	        		<script>
+				      $(function () {
+
+				        $(\'.delete-sig\').on(\'submit\', function (e) {	          
+				          e.preventDefault();	         
+				          $.ajax({
+				            type: \'POST\',
+				            url: \'/sigdelete.php\',
+				            data: $(\'#\'+this.id).serialize(),
+				            success: function (data) {
+				              if (data == "false") {
+				                
+				              } else if (data == "true") {
+				                $.ajax({
+				                    url:\'/getSystemSigs.php\',
+				                    type:\'GET\',                    
+				                    beforeSend:function () {
+
+				                    },
+				                    success:function (data) {                                            
+				                      $(".signature-list").html("");
+				                      $(".signature-list").html(data);                                                      
+				                        
+				                    }
+				                });     
+				              }
+				            }
+				          });
+
+				        });
+
+				      });
+				    </script>
 	            </div>
 	            <div class="col-xs-12 intel">
 	                <h4>Neighbouring Systems</h4>
@@ -231,10 +312,57 @@
 	            <div class="col-xs-12" style="height: 200px;">
 	                <h6>Add Signatures</h6>
 	                <form id="add-sig" action="signature" enctype="multipart/form-data" method="post">
-	                    <textarea id="sigdata" name="sigdata" placeholder="Add signature results" style="width:100%; color:#333333; font-size:12px" rows="4"></textarea>
-	                    <button type="submit" name="Submit" id="Submit" class="btn btn-default">Submit</button>
-	                </form>
+	                      <textarea id="sigdata" name="sigdata" placeholder="Add signature results" style="width:100%; color:#333333; font-size:12px" rows="4"></textarea>
+	                      <button type="submit" name="Submit" id="Submit" class="btn btn-default">Submit</button>
+	                  </form>
+	                  <script>
+                            $(function () {
+
+                              $(\'#add-sig\').on(\'submit\', function (e) {
+
+                                e.preventDefault();          
+                                $.ajax({
+                                  type: \'POST\',
+                                  url: \'/sigadd.php\',
+                                  data: $(\'#add-sig\').serialize(),
+                                  success: function (data) {
+                                    if (data == "false") {
+                                      $(\'#sig-report\').html("<div class=\"col-md-2\"></div>\
+                                                <div class=\"col-xs-12 col-md-8 notification-container notification-failed\">\
+                                                  <div class=\"notification-left\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></div>\
+                                                  <div class=\"notification-right\"><div class=\"notification-note\">A signature failed to add.</div></div>\
+                                                </div>");
+                                    } else if (data == "true") {
+                                      $(\'#sig-report\').html("<div class=\"col-md-2\"></div>\
+                                                <div class=\"col-xs-12 col-md-8 notification-container notification-success\">\
+                                                  <div class=\"notification-left\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></div>\
+                                                  <div class=\"notification-right\"><div class=\"notification-note\">All Signatures added.</div></div> \
+                                                </div>");
+
+                                      $.ajax({
+                                          url:\'/getSystemSigs.php\',
+                                          type:\'GET\',                    
+                                          beforeSend:function () {
+
+                                          },
+                                          success:function (data) {                                            
+                                            $(".signature-list").html("");
+                                            $(".signature-list").html(data);                                                      
+                                              
+                                          }
+                                      });     
+                                    }
+                                  }
+                                });
+
+                              });
+
+                            });
+                          </script>
 	            </div>
+	            <div id="sig-report" class="col-xs-12">
+
+                </div>
 	            <div class="col-xs-12 signature-list">
 	                <table>
 	                    <tr>
@@ -252,6 +380,7 @@
 	                        $prepared2->bind_param('s', $main_system_id);    
 	                        $prepared2->execute();
 	                        $result2 = get_result($prepared2);
+	                        $count = 0;
 	                        while ($row2 = array_shift($result2)) {
 	                            $system = $row2['system'];
 	                            $sigID = $row2['sig_id'];
@@ -269,21 +398,54 @@
 	                                    <td><a href="https://zkillboard.com/character/'.$reportedID.'/">'.$reported.'</a></td>
 	                                    <td>'.$reportTime.'</td>
 	                                    <td>
-                                            <form id="sig-action-form" action="delete-signature" method="post" style="margin: 0;">
-                                              <input type="hidden" name="sig_id" value="'.$sigID.'">
-                                              <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Signature" name="del_sig" value="Delete Sig" style="padding-left:6px;">
-                                                <span><i class="fa fa-times" aria-hidden="true"></i></span>
-                                              </button>
-                                          	</form>
+                                            <form id="delete-sig-'.$count.'" class="delete-sig" enctype="multipart/form-data" method="post">
+				                                  <input type="hidden" name="sig_id" value="'.$sigID.'">
+				                                  <button id="Submit" type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Signature" name="Submit" value="Delete Sig" style="padding-left:6px;">
+				                                    <span><i class="fa fa-times" aria-hidden="true"></i></span>
+				                                  </button>                                  
+				                              </form>        
                                         </td>
 	                                </tr>
 	                            ';
-	                            
+	                            $count = $count +1;
 	                        }   
 	                        $conn2->close();       
 	                        
 	                 
 	        echo '  </table>
+	        		<script>
+				      $(function () {
+
+				        $(\'.delete-sig\').on(\'submit\', function (e) {	          
+				          e.preventDefault();	         
+				          $.ajax({
+				            type: \'POST\',
+				            url: \'/sigdelete.php\',
+				            data: $(\'#\'+this.id).serialize(),
+				            success: function (data) {
+				              if (data == "false") {
+				                
+				              } else if (data == "true") {
+				                $.ajax({
+				                    url:\'/getSystemSigs.php\',
+				                    type:\'GET\',                    
+				                    beforeSend:function () {
+
+				                    },
+				                    success:function (data) {                                            
+				                      $(".signature-list").html("");
+				                      $(".signature-list").html(data);                                                      
+				                        
+				                    }
+				                });     
+				              }
+				            }
+				          });
+
+				        });
+
+				      });
+				    </script>
 	            </div>';
          echo ' <div class="col-xs-12 intel">
                 	<h4>Neighbouring Systems</h4>
