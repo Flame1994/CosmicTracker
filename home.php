@@ -468,13 +468,14 @@
                                                   <div class=\"notification-left\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></div>\
                                                   <div class=\"notification-right\"><div class=\"notification-note\">A signature failed to add.</div></div>\
                                                 </div>");
+                                      $(\'#sigdata\').val(\'\');
                                     } else if (data == "true") {
                                       $(\'#sig-report\').html("<div class=\"col-md-2\"></div>\
                                                 <div class=\"col-xs-12 col-md-8 notification-container notification-success\">\
                                                   <div class=\"notification-left\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></div>\
                                                   <div class=\"notification-right\"><div class=\"notification-note\">All Signatures added.</div></div> \
                                                 </div>");
-
+                                        $(\'#sigdata\').val(\'\');
                                       $.ajax({
                                           url:\'/getSystemSigs.php\',
                                           type:\'GET\',                    
@@ -588,7 +589,7 @@
                           $(function () {
 
                             $(\'.delete-sig\').on(\'submit\', function (e) {
-                              e.preventDefault();
+                              e.preventDefault();                              
                               $.ajax({
                                 type: \'POST\',
                                 url: \'/sigdelete.php\',
@@ -659,7 +660,7 @@
                                   
                                   <div class="col-xs-12 intel-system">
                                       <h5>'.$system_name.' <span class="security-status"> '.$sec_status.'</span> &lsaquo; '.$const_name.' &lsaquo; '.$region_name.'</h5>
-                                      <div class="col-xs-6">
+                                      <div class="col-xs-12 col-lg-6">
                                           <table>';
                                           $conn = connect();
                                           $prepared = $conn->prepare("SELECT * FROM signatures WHERE system = ? AND (corp_id = ? OR alliance_id = ?)");  
@@ -690,7 +691,7 @@
 
                               echo '      </table>
                                       </div>
-                                      <div id="'.$system_id.'-intel" class="col-xs-6">
+                                      <div id="'.$system_id.'-intel" class="col-xs-12 col-lg-6">
                                           <button onclick="getIntel('.$system_id.')" class="btn btn-default btn-intel">Get System Intel</button>                                          
                                       </div>              
                                   </div>

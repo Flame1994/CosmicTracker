@@ -31,14 +31,28 @@
     	$sig_id = $info[0];	    	
     	$sig_type = $info[2];	    
     	$sig_name = $info[3];
-    	if ($sig_type == '' || !isset($sig_type) || $sig_type == null) {
-    		$has = true;
-    	} else {
-    		$var = add_signature($system, $system_id, $const_name, $const_id, $region_name, $region_id, $sig_id, $sig_type, $sig_name, $reporter_name, $reporter_id, $corp_id, $alliance_id);
+    	
+		if ($alliance_id == '' || is_null($alliance_id)) {
+			$alliance_id = "";
+		}
+		if ($corp_id == '' || is_null($corp_id)) {
+			$corp_id = "";
+		}
+		if ($sig_type == '' || !isset($sig_type) || $sig_type == null) {
+			$sig_type = "Unknown";
+		}
+		if ($sig_name == '' || !isset($sig_name) || $sig_name == null) {
+			$sig_name = "Unknown";
+		}
+		if ($sig_id == '' || is_null($sig_id)) {
+			$has = false;
+		} else {
+			$var = add_signature($system, $system_id, $const_name, $const_id, $region_name, $region_id, $sig_id, $sig_type, $sig_name, $reporter_name, $reporter_id, $corp_id, $alliance_id);
 	    	if ($var == false) {
 	    		$has = true;
-	    	}
-    	}			    	
+	    	}	
+		}
+				    	
 	} 	
 	if ($has == true) {
 		// header('Location: '.'/home?s=f');

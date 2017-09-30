@@ -10,15 +10,37 @@
 		$conn = connect();
 
 		$prepared = $conn->prepare("SELECT * FROM signatures WHERE sig_id = ? AND system_id = ? AND alliance_id = ?"); 
-		$prepared->bind_param('ss', $sig_id, $system_id, $alliance_id);    
+		$prepared->bind_param('sss', $sig_id, $system_id, $alliance_id);    
 		$prepared->execute();
 		$result = get_result($prepared);
-		if ($prepared->num_rows == 0 || $sig_type == '') {
-		  	$date = date('Y-m-d H:i:s', time() - 60*60*2 - 103); 				
-			$prepared = $conn->prepare("INSERT INTO `signatures` (`id`, `system`, `system_id`, `const_name`, `const_id`, `region_name`, `region_id`, `sig_id`, `sig_type`, `sig_name`, `reported`, `reported_id`, `corp_id`, `alliance_id`, `report_time`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"); 
-			$entryVal = NULL;		
-			$prepared->bind_param('sssssssssssssss', $entryVal, $system, $system_id, $const_name, $const_id, $region_name, $region_id, $sig_id, $sig_type, $sig_name, $reporter_name, $reporter_id, $corp_id, $alliance_id, $date);
-			$prepared->execute();
+		if ($prepared->num_rows == 0 || $sig_type != 'Unknown') {
+			$date = date('Y-m-d H:i:s', time() - 60*60*2 - 103); 
+
+			if ($prepared->num_rows != 0 && $sig_type != 'Unknown') {	
+				// update the entry		
+
+				if ($sig_name != 'Unknown') {
+					if (is_null($sig_type) || is_null($sig_id)) {
+						return false;
+					}
+					$prepared= $conn->prepare("UPDATE `signatures` SET sig_type = ?, sig_name = ?, reported = ?, reported_id = ?, corp_id = ?, alliance_id = ?, report_time = ? WHERE sig_id = ?"); 
+				    $prepared->bind_param('ssssssss', $sig_type, $sig_name, $reporter_name, $reporter_id, $corp_id, $alliance_id, $date, $sig_id);    
+				    $prepared->execute();
+				} else {
+					$prepared= $conn->prepare("UPDATE `signatures` SET sig_type = ?, reported = ?, reported_id = ?, corp_id = ?, alliance_id = ?, report_time = ? WHERE sig_id = ?"); 
+				    $prepared->bind_param('sssssss', $sig_type, $reporter_name, $reporter_id, $corp_id, $alliance_id, $date, $sig_id);    
+				    $prepared->execute();
+				}				
+			} else {
+				$prepared = $conn->prepare("INSERT INTO `signatures` (`id`, `system`, `system_id`, `const_name`, `const_id`, `region_name`, `region_id`, `sig_id`, `sig_type`, `sig_name`, `reported`, `reported_id`, `corp_id`, `alliance_id`, `report_time`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"); 
+				$entryVal = NULL;
+				if (is_null($system) || is_null($system_id) || is_null($const_name) || is_null($const_id) || is_null($region_name) || is_null($region_id) || is_null($sig_id) || is_null($sig_type) || is_null($sig_name) || is_null($reporter_name) || is_null($reporter_id) || is_null($corp_id) || is_null($alliance_id)) {
+					return false;
+				}
+				$prepared->bind_param('sssssssssssssss', $entryVal, $system, $system_id, $const_name, $const_id, $region_name, $region_id, $sig_id, $sig_type, $sig_name, $reporter_name, $reporter_id, $corp_id, $alliance_id, $date);
+				$prepared->execute();
+			}
+		  	
 			
 
 			$prepared = $conn->prepare("SELECT * FROM users WHERE user = ?"); 
