@@ -84,8 +84,8 @@
 
                                           },
                                           success:function (data) {                                            
-                                            $(".signature-list").html("");
-                                            $(".signature-list").html(data);                                                      
+                                            $(".sys-info-list").html("");
+                                            $(".sys-info-list").html(data);                                                      
                                               
                                           }
                                       });     
@@ -101,7 +101,7 @@
 	            <div id="sig-report" class="col-xs-12">
 
                 </div>
-	            <div class="col-xs-12 signature-list">
+	            <div class="col-xs-12 signature-list sys-info-list">
 	                <table>
 	                    <tr>
 	                        <th>System</th>
@@ -169,8 +169,8 @@
 
 				                    },
 				                    success:function (data) {                                            
-				                      $(".signature-list").html("");
-				                      $(".signature-list").html(data);                                                      
+				                      $(".sys-info-list").html("");
+				                      $(".sys-info-list").html(data);                                                      
 				                        
 				                    }
 				                });     
@@ -346,8 +346,8 @@
 
                                           },
                                           success:function (data) {                                            
-                                            $(".signature-list").html("");
-                                            $(".signature-list").html(data);                                                      
+                                            $(".sys-info-list").html("");
+                                            $(".sys-info-list").html(data);                                                      
                                               
                                           }
                                       });     
@@ -363,7 +363,7 @@
 	            <div id="sig-report" class="col-xs-12">
 
                 </div>
-	            <div class="col-xs-12 signature-list">
+	            <div class="col-xs-12 signature-list sys-info-list">
 	                <table>
 	                    <tr>
 	                        <th>System</th>
@@ -433,8 +433,8 @@
 
 				                    },
 				                    success:function (data) {                                            
-				                      $(".signature-list").html("");
-				                      $(".signature-list").html(data);                                                      
+				                      $(".sys-info-list").html("");
+				                      $(".sys-info-list").html(data);                                                      
 				                        
 				                    }
 				                });     

@@ -483,8 +483,8 @@
 
                                           },
                                           success:function (data) {                                            
-                                            $(".signature-list").html("");
-                                            $(".signature-list").html(data);                                                      
+                                            $(".sys-info-list").html("");
+                                            $(".sys-info-list").html(data);                                                      
                                               
                                           }
                                       });     
@@ -533,7 +533,7 @@
                 ?>
                 
                 
-                <div class="col-xs-12 signature-list">
+                <div class="col-xs-12 signature-list sys-info-list">
                   <?php
                     if (isset($_SESSION['CharacterSystemName']) && $_SESSION['CharacterSystemName'] != '' && !is_null($_SESSION['CharacterSystemName'])) {
                       echo '
@@ -605,8 +605,8 @@
 
                                         },
                                         success:function (data) {                                            
-                                          $(".signature-list").html("");
-                                          $(".signature-list").html(data);                                                      
+                                          $(".sys-info-list").html("");
+                                          $(".sys-info-list").html(data);                                                      
                                             
                                         }
                                     });     
