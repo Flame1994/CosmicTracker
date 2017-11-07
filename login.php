@@ -1,12 +1,12 @@
 <?php
-
+  require_once("./php/config.php");
   $url = file_get_contents("https://crest-tq.eveonline.com/");
   $content = json_decode($url, true);
 
   $serviceStatus =  $content['serviceStatus'];  
   $serverCount =  $content['userCount_str'];   
   if (isset($_SESSION['CharacterID']) && $serviceStatus == 'online') {
-    header('Location: '.'/home');
+    header('Location: '. $GLOBALS["config"]["app"]["root_dir"] .'/home');
   }
 ?>
 
@@ -281,9 +281,12 @@
             <h1>Welcome</h1>
             <h5>Please Login to start exploring!</h5>
             <?php
-                             
               if ($serviceStatus == 'online') {
-                  echo '<a id="eve-login" href="https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=http://cosmic.ashfordindustries.xyz/callback.php&client_id=86fe2014301a423e9f9a4df3c44f24b1&scope=characterLocationRead characterNavigationWrite esi-ui.write_waypoint.v1"><img id="login-eve" src="EVE_SSO_Login_Buttons_Large_Black.png"></a>';
+                echo '<a id="eve-login" href="https://login.eveonline.com/oauth/authorize?response_type=code'
+                      .'&redirect_uri='. $GLOBALS["config"]["app"]["root_dir"] .'/callback.php'
+                      .'&client_id='. $GLOBALS["config"]["app"]["client_id"]
+                      .'&scope='. implode("%20", $GLOBALS["config"]["app"]["permissions"]) .'">'
+                      .'<img id="login-eve" src="EVE_SSO_Login_Buttons_Large_Black.png"></a>';
               } else {
                 echo '<h4 style="color:red; text-align:center; font-weight:700;">Eve Servers are offline, come back in a few minutes.</h4>';
               }

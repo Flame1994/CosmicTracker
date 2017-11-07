@@ -1,11 +1,15 @@
 <?php
+    require_once("config.php");
 	/**
      * Connects to the database
      *
      * @return link - the link to the database.
     */
 	function connect() {		
-		$link = mysqli_connect("host", "username", "password", "database");		
+		$link = mysqli_connect($GLOBALS["config"]["database"]["host"],
+                               $GLOBALS["config"]["database"]["user"],
+                               $GLOBALS["config"]["database"]["passwd"],
+                               $GLOBALS["config"]["database"]["db"]);
 
 		if (!$link) {
 			echo "Error: Unable to connect to MySQL." . PHP_EOL;
