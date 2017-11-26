@@ -1,6 +1,6 @@
 <?php
-    require_once("./php/config.php");
-    require_once("./php/connect.php");
+    require("./php/config.php");
+    require("./php/connect.php");
     session_start();
     if (isset($_SESSION["AccessToken"])) {
         $url = file_get_contents("https://crest-tq.eveonline.com/");
@@ -91,6 +91,7 @@
             var queue = [];
             queue.push("<?php echo $_SESSION['CharacterSystemName'] ?>");
             var desto = "";
+            var root_dir = '<?php echo $GLOBALS["config"]["app"]["root_dir"]; ?>';
         </script>
         
         <script type="text/javascript">
@@ -463,36 +464,10 @@
                                 e.preventDefault();          
                                 $.ajax({
                                   type: \'POST\',
-                                  url: \''. $GLOBALS["config"]["app"]["root_dir"] .'/sigadd.php\',
+                                  url: root_dir +\'/sigadd.php\',
                                   data: $(\'#add-sig\').serialize(),
                                   success: function (data) {
-                                    if (data == "false") {
-                                      $(\'#sig-report\').html("<div class=\"col-md-2\"></div>\
-                                                <div class=\"col-xs-12 col-md-8 notification-container notification-failed\">\
-                                                  <div class=\"notification-left\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></div>\
-                                                  <div class=\"notification-right\"><div class=\"notification-note\">A signature failed to add.</div></div>\
-                                                </div>");
-                                      $(\'#sigdata\').val(\'\');
-                                    } else if (data == "true") {
-                                      $(\'#sig-report\').html("<div class=\"col-md-2\"></div>\
-                                                <div class=\"col-xs-12 col-md-8 notification-container notification-success\">\
-                                                  <div class=\"notification-left\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></div>\
-                                                  <div class=\"notification-right\"><div class=\"notification-note\">All Signatures added.</div></div> \
-                                                </div>");
-                                        $(\'#sigdata\').val(\'\');
-                                      $.ajax({
-                                          url:\''. $GLOBALS["config"]["app"]["root_dir"] .'/getSystemSigs.php\',
-                                          type:\'GET\',                    
-                                          beforeSend:function () {
-
-                                          },
-                                          success:function (data) {                                            
-                                            $(".sys-info-list").html("");
-                                            $(".sys-info-list").html(data);                                                      
-                                              
-                                          }
-                                      });     
-                                    }
+                                    location.reload();
                                   }
                                 });
 
@@ -596,24 +571,13 @@
                               e.preventDefault();                              
                               $.ajax({
                                 type: \'POST\',
-                                url: \''. $GLOBALS["config"]["app"]["root_dir"] .'/sigdelete.php\',
+                                url: root_dir +\'/sigdelete.php\',
                                 data: $(\'#\'+this.id).serialize(),
                                 success: function (data) {
                                   if (data == "false") {
                                     
                                   } else if (data == "true") {
-                                    $.ajax({
-                                        url: \''. $GLOBALS["config"]["app"]["root_dir"] .'/getSystemSigs.php\',
-                                        type:\'GET\',                    
-                                        beforeSend:function () {
-
-                                        },
-                                        success:function (data) {                                            
-                                          $(".sys-info-list").html("");
-                                          $(".sys-info-list").html(data);                                                      
-                                            
-                                        }
-                                    });     
+                                    location.reload();   
                                   }
                                 }
                               });
