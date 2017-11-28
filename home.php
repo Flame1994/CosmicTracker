@@ -1,4 +1,7 @@
-<?php    
+<?php
+    require("./php/config.php");
+    require("./php/connect.php");
+    session_start();
     if (isset($_SESSION["AccessToken"])) {
         $url = file_get_contents("https://crest-tq.eveonline.com/");
         $content = json_decode($url, true);
@@ -6,14 +9,16 @@
         $serviceStatus =  $content['serviceStatus'];
         $serverCount =  $content['userCount_str'];        
         if ($serviceStatus != 'online') {
-          header('Location: '.'/logout');
+          header('Location: '. $GLOBALS["config"]["app"]["root_dir"] .'/login.php');
         }
 
 
         $url = 'https://login.eveonline.com/oauth/token';
         $data = array('grant_type' => 'refresh_token', 'refresh_token' => $_SESSION["RefreshToken"]);
 
-        $key = base64_encode('86fe2014301a423e9f9a4df3c44f24b1:B54yYfQbuBtBYnqSG6tymVvapyK8ek1Alt5T56SG');
+        $key = base64_encode($GLOBALS["config"]["app"]["client_id"]
+                             .':'
+                             .$GLOBALS["config"]["app"]["secret_key"]);
         $options = array(
             'http' => array(
                 'header'  => "Authorization: Basic ".$key."\r\nContent-type: application/x-www-form-urlencoded\r\n",
@@ -54,10 +59,9 @@
             
         }
     } else {
-      header('Location: '.'/login');
+      header('Location: '. $GLOBALS["config"]["app"]["root_dir"] .'/login');
     }
 ?>
-
 <html lang="en-US" class=" js no-touch cssanimations csstransitions" style="">
 	<head>      
       
@@ -87,6 +91,7 @@
             var queue = [];
             queue.push("<?php echo $_SESSION['CharacterSystemName'] ?>");
             var desto = "";
+            var root_dir = '<?php echo $GLOBALS["config"]["app"]["root_dir"]; ?>';
         </script>
         
         <script type="text/javascript">
@@ -459,36 +464,10 @@
                                 e.preventDefault();          
                                 $.ajax({
                                   type: \'POST\',
-                                  url: \'/sigadd.php\',
+                                  url: root_dir +\'/sigadd.php\',
                                   data: $(\'#add-sig\').serialize(),
                                   success: function (data) {
-                                    if (data == "false") {
-                                      $(\'#sig-report\').html("<div class=\"col-md-2\"></div>\
-                                                <div class=\"col-xs-12 col-md-8 notification-container notification-failed\">\
-                                                  <div class=\"notification-left\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></div>\
-                                                  <div class=\"notification-right\"><div class=\"notification-note\">A signature failed to add.</div></div>\
-                                                </div>");
-                                      $(\'#sigdata\').val(\'\');
-                                    } else if (data == "true") {
-                                      $(\'#sig-report\').html("<div class=\"col-md-2\"></div>\
-                                                <div class=\"col-xs-12 col-md-8 notification-container notification-success\">\
-                                                  <div class=\"notification-left\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></div>\
-                                                  <div class=\"notification-right\"><div class=\"notification-note\">All Signatures added.</div></div> \
-                                                </div>");
-                                        $(\'#sigdata\').val(\'\');
-                                      $.ajax({
-                                          url:\'/getSystemSigs.php\',
-                                          type:\'GET\',                    
-                                          beforeSend:function () {
-
-                                          },
-                                          success:function (data) {                                            
-                                            $(".sys-info-list").html("");
-                                            $(".sys-info-list").html(data);                                                      
-                                              
-                                          }
-                                      });     
-                                    }
+                                    location.reload();
                                   }
                                 });
 
@@ -592,24 +571,13 @@
                               e.preventDefault();                              
                               $.ajax({
                                 type: \'POST\',
-                                url: \'/sigdelete.php\',
+                                url: root_dir +\'/sigdelete.php\',
                                 data: $(\'#\'+this.id).serialize(),
                                 success: function (data) {
                                   if (data == "false") {
                                     
                                   } else if (data == "true") {
-                                    $.ajax({
-                                        url:\'/getSystemSigs.php\',
-                                        type:\'GET\',                    
-                                        beforeSend:function () {
-
-                                        },
-                                        success:function (data) {                                            
-                                          $(".sys-info-list").html("");
-                                          $(".sys-info-list").html(data);                                                      
-                                            
-                                        }
-                                    });     
+                                    location.reload();   
                                   }
                                 }
                               });
@@ -999,7 +967,7 @@
                 clearRegionMap();
                 $("#relic-filter").css("background-color", "#FF8C00");
                 $.ajax({
-                    url:'/getRelicSites.php',
+                    url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/getRelicSites.php',
                     type:'GET',                    
                     beforeSend:function () {
 
@@ -1022,7 +990,7 @@
                 clearRegionMap();
                 $("#data-filter").css("background-color", "cyan");
                 $.ajax({
-                    url:'/getDataSites.php',
+                    url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/getDataSites.php',
                     type:'GET',                    
                     beforeSend:function () {
 
@@ -1046,7 +1014,7 @@
                 clearRegionMap();
                 $("#gas-filter").css("background-color", "grey");
                 $.ajax({
-                    url:'/getGasSites.php',
+                    url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/getGasSites.php',
                     type:'GET',                    
                     beforeSend:function () {
 
@@ -1069,7 +1037,7 @@
                 clearRegionMap();
                 $("#combat-filter").css("background-color", "red");
                 $.ajax({
-                    url:'/getCombatSites.php',
+                    url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/getCombatSites.php',
                     type:'GET',                    
                     beforeSend:function () {
 
@@ -1092,7 +1060,7 @@
                 clearRegionMap();
                 $("#wormhole-filter").css("background-color", "yellow");                
                 $.ajax({                    
-                    url:'/getWormholes.php',
+                    url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/getWormholes.php',
                     type:'GET',                    
                     beforeSend:function () {                      
                     },
@@ -1121,7 +1089,7 @@
     <script type="text/javascript">
       $(document).ready(function(){
         $.ajax({
-            url:'/getMap.php',
+            url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/getMap.php',
             type:'GET',
             data:'system='+<?php echo "\"".$_SESSION['CharacterSystemID']."\"";?>,
             beforeSend:function () {
@@ -1142,7 +1110,7 @@
         $(document).ready(function(){
           $("#search").on("paste keyup", function() {         
              $.ajax({
-                url:'/getSearchResult.php',
+                url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/getSearchResult.php',
                 type:'GET',
                 data:'s='+$(this).val(),
                 beforeSend:function () {
@@ -1157,7 +1125,7 @@
         setInterval(function() {
           $(document).ready(function(){
             $.ajax({
-                url:'/updateSystem.php',
+                url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/updateSystem.php',
                 type:'GET',
                 beforeSend:function () {
 
@@ -1167,7 +1135,7 @@
                     } else if (data2 == null || data2 == '' || data2 == 'NONE') {
                     } else {                      
                       $.ajax({
-                        url:'/checkSystem.php',
+                        url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/checkSystem.php',
                         type:'GET',
                         data:'system='+data2,
                         beforeSend:function () {                            
@@ -1191,7 +1159,7 @@
 
                                 $("#jump-history").html(text);
                                 $.ajax({
-                                    url:'/getMap.php',
+                                    url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/getMap.php',
                                     type:'GET',
                                     data:'system='+data2,
                                     beforeSend:function () {
@@ -1203,7 +1171,7 @@
                                             $("#canvas-container").html("");
                                             $("#canvas-container").html(data);
                                             $.ajax({
-                                                url:'/getSignatures.php',
+                                                url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/getSignatures.php',
                                                 type:'GET',                    
                                                 beforeSend:function () {
 
@@ -1305,7 +1273,7 @@
     <script type="text/javascript">
       setInterval(function() {
             $.ajax({
-                url:'/refreshToken.php',
+                url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/refreshToken.php',
                 type:'GET',
                 beforeSend:function () {
 
@@ -1347,7 +1315,7 @@
         function showSystemInfo(system, id) {
           $("#"+system+"-info").css("display", "block");
           $.ajax({
-              url:'/getSystemInfo.php',
+              url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/getSystemInfo.php',
               type:'GET',
               data:'system='+id,
               beforeSend:function () {
@@ -1362,7 +1330,7 @@
         }
         function setDestenation(system) {
           $.ajax({
-              url:'/setDestenation.php',
+              url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/setDestenation.php',
               type:'GET',
               data:'system='+system,
               beforeSend:function () {
@@ -1378,7 +1346,7 @@
     <script type="text/javascript">
       function getIntel(system) {
         $.ajax({
-            url:'/getIntel.php',
+            url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/getIntel.php',
             type:'GET',
             data:'system='+system,
             beforeSend:function () {
@@ -1399,7 +1367,7 @@
           e.preventDefault();          
           $.ajax({
             type: 'POST',
-            url: '/sigadd.php',
+            url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/sigadd.php',
             data: $('#add-sig').serialize(),
             success: function (data) {
               if (data == "false") {
@@ -1416,7 +1384,7 @@
                           </div>");
 
                 $.ajax({
-                    url:'/getSystemSigs.php',
+                    url: '<?php echo($GLOBALS["config"]["app"]["root_dir"]); ?>/getSystemSigs.php',
                     type:'GET',                    
                     beforeSend:function () {
 

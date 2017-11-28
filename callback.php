@@ -1,4 +1,5 @@
-<?php		
+<?php	
+	require_once("./php/config.php");
 	// ============================================================================
 	// Handles the callback from the EVE SSO
 	// ============================================================================
@@ -10,7 +11,9 @@
 		$data = array('grant_type' => 'authorization_code', 'code' => $code);
 		
 		// Request Auth
-		$key = base64_encode('86fe2014301a423e9f9a4df3c44f24b1:B54yYfQbuBtBYnqSG6tymVvapyK8ek1Alt5T56SG');
+        $key = base64_encode($GLOBALS["config"]["app"]["client_id"]
+                             .':'
+                             .$GLOBALS["config"]["app"]["secret_key"]);
 		$options = array(
 		    'http' => array(
 		        'header'  => "Authorization: Basic ".$key."\r\nContent-type: application/x-www-form-urlencoded\r\n",
@@ -145,8 +148,8 @@
                 }
 			}
 		}
-		
-		header('Location: '.'/home');
+		print_r($_SESSION);
+		header('Location: '. $GLOBALS["config"]["app"]["root_dir"] .'/home');
 	}
 	
 
